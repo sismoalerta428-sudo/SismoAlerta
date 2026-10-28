@@ -1,0 +1,17 @@
+{
+  "name": "SismoAlerta Clima",
+  "short_name": "Clima",
+  "description": "Pronóstico del clima, mapa de lluvia y estadísticas de tu zona.",
+  "id": "./?app=clima",
+  "lang": "es",
+  "start_url": "./#/clima",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F3B57",
+  "theme_color": "#2563EB",
+  "icons": [
+    { "src": "icon-clima-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-clima-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

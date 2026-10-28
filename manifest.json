@@ -1,0 +1,17 @@
+{
+  "name": "SismoAlerta",
+  "short_name": "SismoAlerta",
+  "description": "Avisos de sismos según la distancia al epicentro, en cualquier parte del mundo.",
+  "id": "./",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1D2A33",
+  "theme_color": "#F8FAFC",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

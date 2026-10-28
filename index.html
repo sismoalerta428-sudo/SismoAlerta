@@ -1,34 +1,649 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SismoAlerta — Luis Garcia</title>
-  <style>
-    body { font-family: system-ui, sans-serif; background: #06101f; color: #e8f0fe; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-    .box { max-width: 480px; background: #0f1c30; border: 1px solid #1e2d45; border-radius: 16px; padding: 28px; }
-    h1 { margin: 0 0 8px; font-size: 22px; }
-    p { color: #8b9bb4; line-height: 1.5; font-size: 14px; }
-    a { color: #3ec6ff; }
-    ol { color: #e8f0fe; font-size: 14px; line-height: 1.6; padding-left: 20px; }
-    code { background: #0a1628; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
-    .ok { color: #22c55e; }
-  </style>
-</head>
-<body>
-  <div class="box">
-    <h1>SismoAlerta</h1>
-    <p>por Luis Garcia</p>
-    <p>El repositorio ya está creado. Para que la app se vea aquí falta <strong>un solo paso</strong>: subir el archivo <code>SismoAlerta.html</code>.</p>
-    <ol>
-      <li>Abre el repo: <a href="https://github.com/sismoalerta428-sudo/SismoAlerta" target="_blank">github.com/sismoalerta428-sudo/SismoAlerta</a></li>
-      <li>Pulsa <strong>Add file → Upload files</strong></li>
-      <li>Sube <code>SismoAlerta.html</code></li>
-      <li>Commit changes</li>
-      <li>Luego: <strong>Settings → Pages →</strong> Source = Deploy from branch → Branch <code>main</code> → Save</li>
-    </ol>
-    <p class="ok">En 1–2 minutos la app estará en:<br>
-    <a href="https://sismoalerta428-sudo.github.io/SismoAlerta/SismoAlerta.html">sismoalerta428-sudo.github.io/SismoAlerta/SismoAlerta.html</a></p>
-  </div>
-</body>
-</html>
+<!-- © 2026 Luis García. Todos los derechos reservados. Prohibida la copia, reproducción o distribución de esta aplicación sin autorización escrita del autor. -->
+<html lang="es"><head><meta charset="utf-8"><style>body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}input,textarea,select,[contenteditable]{-webkit-user-select:text;user-select:text}img{-webkit-user-drag:none;user-drag:none}</style>
+<script>
+/* Protección anticopia (disuasiva): ningún navegador puede ocultar del todo el código de una página web. */
+(function(){
+ /* Pon aquí tu dominio (ej: ['sismoalerta.vercel.app']) y la app solo funcionará ahí. Vacío = sin bloqueo de dominio. */
+ var OK=[];
+ var h=location.hostname;
+ if(OK.length&&h&&h!=='localhost'&&h!=='127.0.0.1'&&!OK.some(function(d){return h===d||h.endsWith('.'+d)})){
+  document.documentElement.innerHTML='<body style="font:16px sans-serif;padding:32px;text-align:center"><h2>SismoAlerta</h2><p>Esta copia no está autorizada. Usa la app oficial.</p></body>';throw 0}
+ /* Que no la puedan meter dentro de otra página (iframe) */
+ try{if(window.top!==window.self)window.top.location=location.href}catch(e){document.documentElement.innerHTML='';}
+ var campo=function(t){return t&&t.closest&&t.closest('input,textarea,select,[contenteditable]')};
+ ['contextmenu','dragstart'].forEach(function(n){document.addEventListener(n,function(e){if(!campo(e.target))e.preventDefault()})});
+ ['copy','cut'].forEach(function(n){document.addEventListener(n,function(e){if(!campo(e.target))e.preventDefault()})});
+ document.addEventListener('keydown',function(e){var k=(e.key||'').toLowerCase(),c=e.ctrlKey||e.metaKey;
+  if(k==='f12'||(c&&['u','s','p'].indexOf(k)>-1)||(c&&e.shiftKey&&['i','j','c','k'].indexOf(k)>-1)||(c&&e.altKey&&k==='u')){e.preventDefault();e.stopPropagation()}},true);
+})();
+</script>
+
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="author" content="Luis García"><meta name="copyright" content="© 2026 Luis García. Todos los derechos reservados."><meta name="referrer" content="origin"><meta name="theme-color" content="#1D2A33">
+<meta name="color-scheme" content="light dark">
+<link rel="manifest" id="mf" href="manifest.json"><link rel="icon" id="fav" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" id="atp" href="apple-sismos.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<title>SismoAlerta</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--roca:#0F172A;--hielo:#F8FAFC;--sal:#fff;--linea:#E2E8F0;--grid:#EEF2F6;--tenue:#64748B;--tx:#0F172A;--btn:#4F46E5;--btnfg:#fff;--prs:#EEF0FF;--magma:#E11D48;--mar:#4F46E5;--bar:#4F46E5;--ocre:#F59E0B;--verde:#059669;--r:16px;--hero:#fff;--acc:#4F46E5;--wb:#2563EB;--wbt:#1D4ED8;--sh:0 1px 3px rgba(15,23,42,.06),0 4px 14px rgba(15,23,42,.04)}
+body[data-app=clima]{--hielo:#F4F7FB;--btn:#2563EB;--mar:#2563EB;--acc:#2563EB;--prs:#E6EDFC;--bar:#2563EB}
+@media (prefers-color-scheme:dark){:root{--hielo:#0B1220;--sal:#121B2E;--linea:#22304A;--grid:#1B2740;--tenue:#93A1BB;--tx:#E8EDF7;--btn:#6D66F2;--btnfg:#fff;--prs:#1E2547;--bar:#8B85FF;--mar:#8B85FF;--acc:#8B85FF;--hero:#121B2E;--wb:#5B8DFF;--wbt:#8FB0FF;--sh:none}body[data-app=clima]{--btn:#3B6FF0;--mar:#5B8DFF;--acc:#5B8DFF;--prs:#1B2C4D;--bar:#5B8DFF}}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:var(--hielo);color:var(--tx);font-size:15px;line-height:1.45;padding-bottom:calc(76px + env(safe-area-inset-bottom));font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:3px solid var(--mar);outline-offset:2px}
+.hero{background:var(--hero);color:var(--tx);padding:calc(12px + env(safe-area-inset-top)) 16px 10px;position:sticky;top:0;z-index:30;border-bottom:1px solid var(--linea)}
+.hero .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.hero .mark{font-weight:800;font-size:18px;letter-spacing:-.02em}
+.hero .stl{display:flex;align-items:center;gap:2px;margin-top:6px;font-size:12px;color:var(--tenue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sw{display:inline-flex;align-items:center;gap:4px;font-weight:700;font-size:13px;color:var(--acc);background:var(--prs);border:0;border-radius:999px;padding:8px 10px 8px 14px;text-decoration:none;white-space:nowrap}
+body[data-app=clima] .hero{background:linear-gradient(160deg,#2563EB 0%,#4F8DF7 55%,#8CCBFF 100%);color:#fff;position:relative;border:0;border-radius:0 0 28px 28px;overflow:hidden;padding:calc(16px + env(safe-area-inset-top)) 20px 0}
+body[data-app=clima] .hero .sw{color:#fff;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4)}
+body[data-app=clima] .hero .mark{color:#fff}
+.hero .loc{display:inline-block;margin-top:12px;font-size:12px;font-weight:700;color:#fff;background:rgba(255,255,255,.2);border-radius:999px;padding:4px 10px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero .t0{font-size:76px;font-weight:800;line-height:1;letter-spacing:-.045em;margin:8px 0 4px}
+.hero p{margin:0 0 6px;color:rgba(255,255,255,.85)}
+.lbl{font-size:11px;font-weight:700;letter-spacing:.07em;color:var(--tenue);text-transform:uppercase;margin:0 0 6px}
+.pill{display:inline-block;background:var(--prs);color:var(--acc);border-radius:99px;padding:4px 11px;font-size:12px;font-weight:700}
+.bigm{font-size:54px;font-weight:800;letter-spacing:-.04em;line-height:1;margin:6px 0 8px}
+.card.cn #sg{width:calc(100% + 32px);margin:10px -16px -16px;height:64px;border-radius:0 0 var(--r) var(--r)}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:10px}.hd .lbl{margin:0}
+.cl summary{cursor:pointer;font-weight:600;font-size:13px;color:var(--tenue);list-style:none}.cl summary::-webkit-details-marker{display:none}.cl[open] summary{margin-bottom:8px}.cl u{color:var(--acc)}.cpr{max-width:720px;margin:4px auto 0;padding:6px 16px 18px;text-align:center;font-size:11px;line-height:1.5;color:var(--tenue)}#sh{display:none;position:fixed;inset:0;z-index:60;background:rgba(15,23,42,.5);align-items:center;justify-content:center;padding:16px}#sh.on{display:flex}#shc{background:var(--sal);width:100%;max-width:420px;max-height:92dvh;overflow:auto;border-radius:22px;padding:18px 16px;box-shadow:0 10px 40px rgba(0,0,0,.3)}#shc .btn{margin-top:8px}.shh{display:flex;gap:12px;align-items:center;margin-bottom:10px}.shh b{display:block}@media(prefers-reduced-motion:no-preference){#sh.on #shc{animation:up .22s ease-out}}@keyframes up{from{transform:scale(.94);opacity:.4}}a.btn{color:var(--tx)}a.btn.p{color:var(--btnfg)}.ck{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--linea);display:grid;place-items:center;color:transparent;font-weight:800;font-size:15px}.ck.on{background:var(--acc);border-color:var(--acc);color:#fff}.acts{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0}.acts .mini{flex:1;justify-content:center}.mini.dng{color:#E11D48;border-color:rgba(225,29,72,.4)}.selbar{position:fixed;left:16px;right:16px;max-width:688px;margin:0 auto;bottom:calc(84px + env(safe-area-inset-bottom));z-index:45;display:flex;gap:8px;background:var(--sal);border:1px solid var(--linea);border-radius:14px;padding:10px;box-shadow:0 4px 20px rgba(0,0,0,.25)}.selbar .btn{margin:0;flex:1;padding:10px 6px}.lnk{font-weight:700;font-size:13px;color:var(--acc);text-decoration:none;white-space:nowrap}
+.mini{white-space:nowrap;flex:none;height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--linea);background:var(--sal);font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.srch{margin:10px 0 2px}
+ol.qh{margin:8px 0 0;padding-left:20px;color:var(--tenue);font-size:14px;line-height:1.55}
+#sg{display:block;width:calc(100% + 40px);margin:0 -20px;height:76px}
+main{padding:16px;max-width:720px;margin:0 auto}
+.card{background:var(--sal);border:1px solid var(--linea);border-radius:var(--r);padding:16px;margin-bottom:14px;box-shadow:var(--sh);overflow:hidden}
+.card h2{font-size:17px;margin:0 0 8px;letter-spacing:-.01em}
+.sm{color:var(--tenue);font-size:13px;margin:4px 0}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);background:var(--sal);border:1px solid var(--linea);border-radius:var(--r);margin-bottom:14px;box-shadow:var(--sh)}
+.strip div{padding:12px 12px 10px;border-left:1px solid var(--linea)}.strip div:first-child{border-left:0}
+.strip b{display:block;font-size:24px;line-height:1.1;font-weight:800;letter-spacing:-.02em}
+.strip span{display:block;font-size:12px;color:var(--tenue);margin-top:2px;line-height:1.3}
+.dh{font-size:13px;margin:14px 0 2px;color:var(--tx2,inherit);opacity:.75}.chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 8px}
+.chp{border:1px solid var(--linea);background:transparent;border-radius:999px;padding:6px 13px;font-weight:700;font-size:13px}
+.chp.on{background:var(--btn);color:var(--btnfg);border-color:var(--btn)}
+.chp[disabled]{opacity:.45;cursor:not-allowed}
+.ev{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--linea);padding:12px 0;color:inherit}
+.ev:first-of-type{border-top:0}
+.mg{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:16px;color:#fff;background:var(--verde)}
+.mg.a{background:var(--ocre);color:#1B1300}.mg.r{background:var(--magma)}
+.ev b{display:block}
+.btn{border:1px solid var(--linea);background:var(--sal);border-radius:12px;padding:11px 14px;font-weight:700}
+.btn.p{background:var(--btn);color:var(--btnfg);border-color:var(--btn)}.btn.w{width:100%;margin-top:8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0}
+input[type=text],input[type=email],select{width:100%;padding:10px 12px;border:1px solid var(--linea);border-radius:10px;background:var(--sal);color:var(--tx)}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--sal);border-top:1px solid var(--linea);padding-bottom:env(safe-area-inset-bottom);z-index:40}
+.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 0 8px;text-decoration:none;color:var(--tenue);font-weight:700;font-size:11px}
+.tabs svg{width:22px;height:22px}
+.tabs a.on{color:var(--acc)}.tabs a.on svg{box-sizing:content-box;padding:4px 16px;margin:-4px 0;border-radius:12px;background:var(--prs)}
+#map{height:max(360px,calc(100dvh - 380px));border-radius:var(--r);border:1px solid var(--linea)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;background:#9AA8B0}.dot.ok{background:var(--verde)}.dot.no{background:var(--magma)}
+.big{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:0}
+.chart{position:relative;margin-top:6px}.chart svg{display:block;width:100%;height:auto;touch-action:pan-y}
+.ax{fill:var(--tenue);font-size:10px}.lab{fill:var(--tx);font-size:10px;font-weight:700;text-anchor:middle}
+.tip{display:none;position:absolute;top:-4px;transform:translate(-50%,-100%);background:var(--btn);color:var(--btnfg);font-size:12px;font-weight:700;line-height:1.35;padding:6px 9px;border-radius:8px;white-space:nowrap;pointer-events:none;z-index:5}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--tenue);margin-top:8px}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+details{margin-top:10px}summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--tenue)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}th,td{text-align:left;padding:6px 4px;border-top:1px solid var(--linea)}th{color:var(--tenue);font-weight:700}td.n,th.n{text-align:right}
+.now{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.t{font-size:60px;font-weight:800;line-height:1;letter-spacing:-.04em;margin:0}
+.wxi{width:68px;height:68px;color:var(--ocre);flex:none}
+.det{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 14px;margin:12px 0 0}
+.det div{font-size:13px;color:var(--tenue)}.det b{color:var(--tx)}
+.dy{display:grid;grid-template-columns:86px 28px 1fr 46px;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--linea)}
+.dy:first-of-type{border-top:0}
+.dy .ic{width:26px;height:26px;color:var(--tenue)}
+.rg{position:relative;height:6px;border-radius:3px;background:var(--grid)}.rg i{position:absolute;top:0;bottom:0;border-radius:3px;background:linear-gradient(90deg,var(--bar),var(--ocre))}
+.dy .tt{display:flex;justify-content:space-between;font-size:12px;color:var(--tenue);margin-bottom:4px}
+.dy .ll{font-size:12px;color:var(--tenue);text-align:right}
+.hrs{display:flex;gap:4px;overflow-x:auto;padding-bottom:6px;margin:0 -4px;scroll-snap-type:x proximity}
+.hr{flex:none;width:58px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;color:var(--tenue);scroll-snap-align:start}
+.hr b{color:var(--tx);font-size:16px}.hr .ic{width:24px;height:24px}.hr .pp{color:var(--wbt);font-weight:700}
+.lgd{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tenue);margin:8px 0 4px}.lgd i{flex:1;height:8px;border-radius:4px}
+.wl{background:none;border:0;width:0;height:0;overflow:visible}.wl b{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;font-size:12px;font-weight:800;padding:4px 9px;border-radius:999px;background:#fff;color:#0F172A;box-shadow:0 1px 5px rgba(0,0,0,.35)}.wl.me b{background:#0F172A;color:#fff}.wl.hi b{border:2px solid #E11D48}.wl.lo b{border:2px solid #2563EB}.wm{background:none;border:0}.wm b{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;font-size:13px;font-weight:800;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4);font-variant-numeric:tabular-nums}
+#ov{display:none;position:fixed;inset:0;z-index:99;background:var(--magma);color:#fff;padding:calc(28px + env(safe-area-inset-top)) 24px 28px;flex-direction:column;justify-content:space-between}
+#ov h2{font-size:64px;line-height:1;margin:0;font-weight:800}
+#ov .btn{background:#fff;color:var(--roca);border-color:#fff;padding:16px;font-size:18px}
+@media (prefers-reduced-motion:no-preference){#ov.on{animation:pu 1s infinite alternate}}
+@keyframes pu{to{background:#B8301A}}
+
+.mark{display:inline-flex;align-items:center;gap:9px}.mark img{width:28px;height:28px;border-radius:8px;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+#sp{position:fixed;inset:0;z-index:98;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:#1D2A33;color:#fff;opacity:1;transition:opacity .45s ease;font-weight:800;font-size:26px;letter-spacing:-.01em}
+body[data-app=clima] #sp{background:#0F3B57}#sp.off{opacity:0;pointer-events:none}
+#sp img{width:112px;height:112px;border-radius:26px;box-shadow:0 12px 36px rgba(0,0,0,.35);animation:spin .6s cubic-bezier(.2,.8,.2,1)}
+#sp small{font-weight:500;font-size:14px;opacity:.7;margin-top:-10px}
+@keyframes spin{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){#sp img{animation:none}#sp{transition:none}}
+
+/* ===== Pantallas grandes (computadora y tablet horizontal): se aprovecha el ancho ===== */
+@media(min-width:900px){
+ main{max-width:1160px;padding:20px 20px 12px}
+ main[data-r="#/"]{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 18px;align-items:start;column-count:auto}
+ main[data-r="#/"] .c1,main[data-r="#/"] .c2{min-width:0}
+ main[data-r="#/clima"],main[data-r="#/settings"],main[data-r="#/stats"],main[data-r="#/clima/stats"]{column-count:2;column-gap:18px}
+ main[data-r="#/"] .card,main[data-r="#/"] .strip,main[data-r="#/clima"] .card,main[data-r="#/settings"] .card,main[data-r="#/stats"] .card,main[data-r="#/clima/stats"] .card{break-inside:avoid;-webkit-column-break-inside:avoid;margin-bottom:16px}
+ main[data-r="#/inbox"],main[data-r="#/historial"]{max-width:980px}
+ body[data-app] .hero{padding-left:max(16px,calc(50% - 580px));padding-right:max(16px,calc(50% - 580px))}
+ #sg{width:100%;margin:0}
+ .card.cn #sg{width:calc(100% + 32px);margin:10px -16px -16px}
+ body[data-app=clima] .hero{border-radius:0 0 28px 28px}
+ .cpr{max-width:1160px}
+ .tabs{justify-content:center;gap:12px}.tabs a{flex:0 1 170px}
+ .hero .t0{font-size:84px}
+}
+</style></head><body>
+<div id="sp" aria-hidden="true"><img id="spi" alt=""><div id="spn"></div><small id="sps"></small></div>
+<div class="hero" id="hero"></div>
+<main id="v"></main>
+<footer class="cpr">© 2026 Luis García · Todos los derechos reservados<br>Prohibida su copia, reproducción o distribución sin autorización del autor.</footer>
+<nav class="tabs" id="tabs" aria-label="Secciones"></nav>
+<div id="sh" onclick="if(event.target==this)closeSh()" role="dialog" aria-modal="true" aria-label="Opciones del sismo"><div id="shc"></div></div>
+<div id="ov" role="alertdialog" aria-live="assertive"><div><div id="ovk" style="font-weight:700">Sismo cerca de ti</div><h2 id="ovm"></h2><p id="ovt" style="font-size:20px"></p></div>
+<div><p style="font-size:17px;margin-top:0">Agáchate, cúbrete la cabeza y sujétate de algo firme. Aléjate de ventanas. Si estás en la costa y el sismo fue fuerte, ve a zona alta.</p><button class="btn" onclick="stopAlert()">Estoy a salvo</button></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/* ===== Configuración ===== */
+const SB={url:'https://nakqhokxnuwoutltyepq.supabase.co',key:'sb_publishable_Y_1QuPg34XpNp70pz75ZPA_JsTZGwkz'};
+const MAILFN=SB.url+'/functions/v1/sismo-correo',PUSH={fn:SB.url+'/functions/v1/sismo-alertas',vapid:'BKhOb7R0Ectg1vgR5v7Nk3jG6apxWFIgGZ4-V7oMUTeebuB-JkK-vpN1fzmyxN4VPM8PHmuza8VBjRzaKJXKNx8'};
+const DONATE_BANKS=[]; /* ej.: [{banco:'Banco Pichincha',tipo:'Ahorros',numero:'0000000000',titular:'Luis García'}] — vacío = no se muestra */
+const DONATE_URL=''; /* pega aquí tu Stripe Payment Link para mostrar el botón de donar */
+/* Cada fuente = un adaptador. Para sumar otra (SASMEX, SkyAlert...) basta agregar un objeto aquí. El orden es la prioridad al eliminar duplicados. */
+const fdsn=s=>({url:t=>s.u+t,txt:1,parse:d=>d.split('\n').filter(l=>l&&l[0]!='#').map(l=>{const p=l.split('|'),t=p[1];return{id:s.id+p[0],mag:+p[10],place:p[12]||'Sin nombre',t:Date.parse(/Z|[+-]\d\d:?\d\d$/.test(t)?t:t+'Z'),lat:+p[2],lon:+p[3],src:s.id}})});
+const SRC=[
+ {id:'USGS',url:()=>'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson',parse:j=>j.features.map(f=>({id:'us'+f.id,mag:f.properties.mag,place:f.properties.place,t:f.properties.time,lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0],src:'USGS'}))},
+ {id:'EMSC',url:t=>'https://www.seismicportal.eu/fdsnws/event/1/query?format=json&minmag=2.5&limit=500&start='+t,parse:j=>j.features.map(f=>({id:'em'+f.id,mag:f.properties.mag,place:f.properties.flynn_region,t:Date.parse(f.properties.time),lat:f.properties.lat,lon:f.properties.lon,src:'EMSC'}))},
+ {id:'GEOFON',...fdsn({id:'GEOFON',u:'https://geofon.gfz-potsdam.de/fdsnws/event/1/query?format=text&minmag=2.5&orderby=time&limit=300&starttime='})},
+ {id:'INGV',...fdsn({id:'INGV',u:'https://webservices.ingv.it/fdsnws/event/1/query?format=text&minmag=2.5&orderby=time&limit=300&starttime='})}
+];
+const PENDIENTES=[['SASMEX','Requiere convenio con el gobierno de México'],['SkyAlert','Servicio comercial, requiere licencia'],['SASLA','Sin feed público conocido'],['IG-EPN','Sin API estable; por ahora su canal de Telegram']];
+
+/* ===== Utilidades ===== */
+const $=s=>document.querySelector(s),LS=(k,d)=>{try{return JSON.parse(localStorage[k])??d}catch(e){return d}},S=(k,v)=>{try{localStorage[k]=JSON.stringify(v)}catch(e){}};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const km=(a,b,c,d)=>{const r=Math.PI/180,x=Math.sin((c-a)*r/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin((d-b)*r/2)**2;return 12742*Math.asin(Math.sqrt(x))};
+const st=Object.assign({loc:null,dist:null,min:null,siren:true,email:'',push:false},LS('sa2',{}));
+const save=()=>S('sa2',st);
+/* Valores del sistema: deben ser iguales a sa_radio_km y sa_mag_min en la tabla config de Supabase. dist/min = null significa que la persona usa estos. */
+const DEF={dist:300,min:4.5},D=()=>st.dist??DEF.dist,M=()=>st.min??DEF.min;
+let ev=LS('sa2ev',[]),map=null,lastOk=0,focus=null,flt=LS('sa2f',0);
+const dist=e=>st.loc?Math.round(km(st.loc.lat,st.loc.lon,e.lat,e.lon)):null;
+const ago=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'ahora':m<60?'hace '+m+' min':m<1440?'hace '+Math.round(m/60)+' h':'hace '+Math.round(m/1440)+' d'};
+const cl=m=>m>=6?'r':m>=4.5?'a':'';
+/* Regla: avisa si supera tu magnitud mínima dentro de tu radio, o si es muy fuerte aunque esté más lejos */
+const fuerte=m=>m>=8?1000:m>=7.5?800:m>=7?600:m>=6.5?400:0;
+const avisar=(e,d)=>d!=null&&((e.mag>=M()&&d<=D())||d<=fuerte(e.mag));
+const same=(a,b)=>Math.abs(a.t-b.t)<9e4&&km(a.lat,a.lon,b.lat,b.lon)<120;
+const locKey=()=>st.loc?st.loc.lat.toFixed(2)+','+st.loc.lon.toFixed(2):'';
+const fmtN=n=>Number(n).toLocaleString('es');
+
+/* ===== Datos ===== */
+async function get(u,txt){const c=new AbortController(),t=setTimeout(()=>c.abort(),12000);try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw 0;return txt?await r.text():await r.json()}finally{clearTimeout(t)}}
+async function load(){
+ const since=new Date(Date.now()-2*864e5).toISOString().slice(0,19);
+ const res=await Promise.allSettled(SRC.map(s=>get(s.url(since),s.txt).then(s.parse)));
+ let out=[];res.forEach((r,i)=>{SRC[i].ok=r.status=='fulfilled';if(SRC[i].ok)out=out.concat(r.value)});
+ if(!SRC.some(s=>s.ok)){refresh();return}
+ const k=[];out.filter(e=>[e.mag,e.lat,e.lon,e.t].every(Number.isFinite)).forEach(e=>{if(!k.some(x=>same(x,e)))k.push(e)});
+ /* Se guardan todos los sismos de M4.5 o más y los más recientes de los pequeños */
+ ev=[...k.filter(e=>e.mag>=4.5),...k.filter(e=>e.mag<4.5).sort((a,b)=>b.t-a.t).slice(0,250)].sort((a,b)=>b.t-a.t);S('sa2ev',ev);lastOk=Date.now();check();refresh()}
+function check(){if(!st.loc)return;const done=LS('sa2done',[]);
+ for(const e of ev){if(Date.now()-e.t>18e5||done.includes(e.id))continue;const d=dist(e);if(avisar(e,d)){done.push(e.id);S('sa2done',done.slice(-200));fire(e,d);break}}}
+
+/* ===== Alerta ===== */
+let ac,osc,sirI;
+function siren(){if(!st.siren)return;stopSiren();try{ac=ac||new AudioContext();ac.resume&&ac.resume();osc=ac.createOscillator();const g=ac.createGain();g.gain.value=.25;osc.connect(g).connect(ac.destination);osc.type='sawtooth';osc.start();let f=0;sirI=setInterval(()=>{osc.frequency.value=(f++%2)?900:600},450)}catch(e){}}
+function stopSiren(){clearInterval(sirI);if(osc){try{osc.stop()}catch(e){}osc=null}}
+async function notify(e,d){if(!('Notification'in window)||Notification.permission!='granted')return;const t='SismoAlerta M'+e.mag.toFixed(1),o={body:e.place+' · a '+d+' km',icon:'icon-192.png',tag:String(e.id),requireInteraction:true,vibrate:[500,200,500,200,500]};
+ try{const r=await swReg();if(r)return await r.showNotification(t,o);new Notification(t,o)}catch(x){}}
+function fire(e,d){$('#ovm').textContent='M'+e.mag.toFixed(1);$('#ovt').textContent=e.place+' · a '+d+' km de ti';const o=$('#ov');o.style.display='flex';o.classList.add('on');
+ siren();if(navigator.vibrate)navigator.vibrate([500,200,500,200,500,200,500]);if(document.hidden||e.src=='TEST')notify(e,d)}
+function stopAlert(){const o=$('#ov');o.style.display='none';o.classList.remove('on');stopSiren();if(navigator.vibrate)navigator.vibrate(0)}
+function testAlert(d,m){if(!st.loc)return alert('Primero indica tu ubicación.');fire({id:'t'+Date.now(),mag:m,place:'Alerta de prueba',t:Date.now(),lat:st.loc.lat,lon:st.loc.lon,src:'TEST'},d)}
+
+/* ===== Ubicación ===== */
+function locChanged(){save();syncSub();check();render()}
+function gps(){if(!navigator.geolocation)return alert('Este dispositivo no permite obtener la ubicación.');
+ navigator.geolocation.getCurrentPosition(async p=>{st.loc={lat:p.coords.latitude,lon:p.coords.longitude,name:'Mi ubicación (GPS)'};
+  try{const j=await get('https://nominatim.openstreetmap.org/reverse?format=json&zoom=10&lat='+st.loc.lat+'&lon='+st.loc.lon);if(j.display_name)st.loc.name=j.display_name.split(',').slice(0,2).join(',')}catch(e){}
+  locChanged()},()=>alert('No se pudo obtener tu ubicación. Revisa el permiso o escribe tu ciudad.'),{enableHighAccuracy:false,timeout:15000})}
+async function city(){const q=$('#city').value.trim();if(!q)return;
+ try{const j=await get('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q));if(!j[0])return alert('No encontré ese lugar.');
+  st.loc={lat:+j[0].lat,lon:+j[0].lon,name:j[0].display_name.split(',').slice(0,2).join(',')};locChanged()}catch(e){alert('No se pudo buscar. Revisa tu conexión.')}}
+
+
+/* ===== Lugares guardados (hasta 6) ===== */
+const favs=()=>{const a=LS('sa5fav',[]);return Array.isArray(a)?a:[]};
+function favHtml(){const a=favs(),cur=st.loc&&a.some(f=>f.lat.toFixed(2)==st.loc.lat.toFixed(2)&&f.lon.toFixed(2)==st.loc.lon.toFixed(2));
+ return '<div style="margin-top:12px">'+(a.length?'<p class="sm"><b>Mis lugares guardados</b></p><div class="chips">'+a.map((f,i)=>'<span class="chp" style="display:inline-flex;gap:8px;align-items:center"><span onclick="favGo('+i+')" role="button" tabindex="0">'+esc(f.name)+'</span><span onclick="favDel('+i+')" role="button" aria-label="Quitar" style="opacity:.6">✕</span></span>').join('')+'</div>':'')+
+ (st.loc&&!cur&&a.length<6?'<button class="btn w" style="margin-top:8px" onclick="favAdd()">Guardar este lugar en mi lista</button>':'')+'<p class="sm">Al elegir un lugar de la lista también cambia el lugar de tus avisos de sismos.</p></div>'}
+function favAdd(){const a=favs();if(!st.loc||a.length>=6)return;a.push({lat:st.loc.lat,lon:st.loc.lon,name:st.loc.name});S('sa5fav',a);render()}
+function favGo(i){const f=favs()[i];if(!f)return;st.loc={lat:f.lat,lon:f.lon,name:f.name};locChanged()}
+function favDel(i){const a=favs();a.splice(i,1);S('sa5fav',a);render()}
+/* ===== Supabase: correo y push (funciones ya existentes) ===== */
+const post=(u,b)=>fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(async r=>{let j=null;try{j=await r.json()}catch(x){}return j||{ok:false,error:'El servidor no responde'}});
+const u8=b=>{const s=(b+'='.repeat((4-b.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'),r=atob(s);return Uint8Array.from([...r].map(c=>c.charCodeAt(0)))};
+async function swReg(){if(!('serviceWorker'in navigator)||location.protocol.indexOf('http')!=0)return null;try{return await navigator.serviceWorker.ready}catch(e){return null}}
+async function mail(){const m=$('#em').value.trim();if(!/^\S+@\S+\.\S+$/.test(m))return alert('Escribe un correo válido.');if(!st.loc)return alert('Primero indica tu ubicación.');
+ const j=await post(MAILFN,{accion:'suscribir',email:m,lat:st.loc.lat,lon:st.loc.lon,lugar:st.loc.name});if(!j.ok)return alert('No se pudo activar: '+(j.error||'error'));st.email=m;save();render()}
+async function pushOn(){
+ if(!('PushManager'in window))return alert('Este navegador no admite push. En iPhone: Compartir → Añadir a pantalla de inicio y abre la app desde ese ícono.');
+ if(!st.loc)return alert('Primero indica tu ubicación.');
+ const r=await swReg();if(!r)return alert('Abre la app desde una dirección https, no desde un archivo local.');
+ if(await Notification.requestPermission()!='granted')return alert('Debes permitir las notificaciones.');
+ try{let s=await r.pushManager.getSubscription();if(!s)s=await r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(PUSH.vapid)});
+  const j=await post(PUSH.fn,{accion:'suscribir',sub:s.toJSON(),lat:st.loc.lat,lon:st.loc.lon,email:st.email||'',lugar:st.loc.name,dist:st.dist,min:st.min});
+  if(!j.ok)throw new Error(j.error||'error');st.push=true;save()}catch(e){st.push=false;save();alert('No se pudo activar: '+e.message)}render()}
+async function pushOff(){try{const r=await swReg(),s=r&&await r.pushManager.getSubscription();if(s){try{await post(PUSH.fn,{accion:'baja',endpoint:s.endpoint})}catch(e){}await s.unsubscribe()}}catch(e){}st.push=false;save();render()}
+async function syncSub(){if(!st.loc)return;if(st.email)try{await post(MAILFN,{accion:'suscribir',email:st.email,lat:st.loc.lat,lon:st.loc.lon,lugar:st.loc.name})}catch(e){}
+ if(st.push)try{const r=await swReg(),s=r&&await r.pushManager.getSubscription();if(s)await post(PUSH.fn,{accion:'suscribir',sub:s.toJSON(),lat:st.loc.lat,lon:st.loc.lon,email:st.email||'',lugar:st.loc.name,dist:st.dist,min:st.min})}catch(e){}}
+
+/* ===== App de Clima (Open-Meteo, gratis y sin clave) ===== */
+const CH='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+const IC={
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>',
+ cloud:'<path d="M7 18h9.5a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 6.4 11.2 3.4 3.4 0 0 0 7 18z"/>',
+ pc:'<circle cx="8" cy="8" r="2.6"/><path d="M8 2.5v1.2M2.5 8h1.2M4.1 4.1l.9.9M11.9 4.1 11 5"/><path d="M8 19h9a3.6 3.6 0 0 0 .4-7.2A5 5 0 0 0 8.2 12.4 3.3 3.3 0 0 0 8 19z"/>',
+ rain:'<path d="M7 15h9.5a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 6.4 8.2 3.4 3.4 0 0 0 7 15z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>',
+ snow:'<path d="M7 15h9.5a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 6.4 8.2 3.4 3.4 0 0 0 7 15z"/><path d="M8 19h.01M12 19h.01M16 19h.01M10 21.5h.01M14 21.5h.01"/>',
+ storm:'<path d="M7 15h9.5a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 6.4 8.2 3.4 3.4 0 0 0 7 15z"/><path d="m12.5 15-2 3.5h3L11.5 22"/>',
+ fog:'<path d="M4 9h16M6 13h12M4 17h16"/>'};
+const ico=(n,c)=>`<svg class="${c||''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]||IC.cloud}</svg>`;
+const wxInfo=c=>c==0?['Despejado','sun']:c==1?['Mayormente despejado','sun']:c==2?['Parcialmente nublado','pc']:c==3?['Nublado','cloud']:c<=48?['Niebla','fog']:c<=55?['Llovizna','rain']:c<=57?['Llovizna helada','rain']:c<=65?['Lluvia','rain']:c<=67?['Lluvia helada','rain']:c<=77?['Nieve','snow']:c<=82?['Chubascos','rain']:c<=86?['Chubascos de nieve','snow']:['Tormenta','storm'];
+const hhmm=t=>t?String(t).slice(11,16):'—';
+const inRoute=r=>(location.hash||'#/')==r;
+const locForm='<button class="btn p w" onclick="gps()">Usar mi ubicación</button><div class="row"><input type="text" id="city" placeholder="Ciudad o lugar" style="flex:1"><button class="btn" onclick="city()">Buscar</button></div>';
+const locCard=first=>first?`<div class="card"><h2>¿Dónde estás?</h2><p class="sm">Indica tu ubicación para ver el clima de tu zona.</p>${locForm}${favHtml()}</div>`:`<details class="card cl"><summary>Lugar: ${esc(st.loc.name)} · <u>Cambiar</u></summary>${locForm}${favHtml()}</details>`;
+
+/* --- pronóstico del lugar --- */
+let wx=null,wxk='';
+{const c0=LS('sa3wx',null);if(c0&&c0.d&&c0.k==locKey()){wx=c0.d;wxk=c0.k}}
+const wxFresh=()=>!!(st.loc&&wx&&wxk==locKey());
+async function wxLoad(force){
+ if(!st.loc)return null;const k=locKey(),c=LS('sa3wx',null);
+ if(!force&&c&&c.k==k&&c.d&&Date.now()-c.t<18e5){wx=c.d;wxk=k;return wx}
+ const d=await get('https://api.open-meteo.com/v1/forecast?latitude='+st.loc.lat.toFixed(3)+'&longitude='+st.loc.lon.toFixed(3)+'&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl,cloud_cover&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max&timezone=auto&forecast_days=7');
+ if(!d||!d.current||!d.daily||!d.hourly)throw 0;wx=d;wxk=k;S('sa3wx',{k,t:Date.now(),d});return d}
+/* las próximas 24 horas, desde la hora actual */
+const hrs24=()=>{const h=wx.hourly,now=String(wx.current.time).slice(0,13)+':00',i0=Math.max(0,h.time.findIndex(t=>t>=now));
+ return Array.from({length:24},(_,k)=>({t:h.time[i0+k],temp:h.temperature_2m[i0+k],pp:h.precipitation_probability[i0+k],code:h.weather_code[i0+k]})).filter(q=>q.t&&q.temp!=null)};
+
+/* --- encabezado de Clima --- */
+function wxHero(){
+ const h=$('#hero');let body;
+ if(!st.loc)body='<h1>Dinos dónde estás</h1><p>Para ver el clima necesitamos tu ubicación.</p>';
+ else if(!wxFresh())body='<h1>Cargando clima…</h1><p>'+esc(st.loc.name)+'</p>';
+ else{const c=wx.current,i=wxInfo(c.weather_code),d=wx.daily;
+  body=`<div class="t0">${Math.round(c.temperature_2m)}°</div><p><b>${i[0]}</b> · sensación ${Math.round(c.apparent_temperature)}° · mín ${Math.round(d.temperature_2m_min[0])}° · máx ${Math.round(d.temperature_2m_max[0])}°</p>`}
+ h.innerHTML=`<div class="top"><span class="mark">Clima</span><a class="sw" href="#/">Ver sismos${CH}</a></div>${st.loc?`<button class="loc" style="border:0;cursor:pointer" onclick="chLoc()" aria-label="Cambiar lugar">${esc(st.loc.name)} · cambiar</button>`:''}${body}<canvas id="sg"></canvas>`;tcurve()}
+/* La ubicación ya queda guardada: el formulario solo se abre si la persona toca el lugar */
+function chLoc(){const f=$('#lf');if(f){f.remove();return}$('#v').insertAdjacentHTML('afterbegin','<div class="card" id="lf"><h2>Cambiar lugar</h2>'+locForm+favHtml()+'</div>');const c=$('#city');if(c)c.focus()}
+/* curva de temperatura de las próximas 24 horas */
+function tcurve(){const c=$('#sg');if(!c)return;cancelAnimationFrame(sgRaf);const w=c.width=c.clientWidth*2,h=c.height=152,x=c.getContext('2d');
+ if(!wxFresh())return;const hs=hrs24();if(hs.length<2)return;
+ const t=hs.map(q=>q.temp),lo=Math.min(...t),hi=Math.max(...t),sp=(hi-lo)||1,px=i=>10+(w-20)*i/(hs.length-1),py=v=>h-42-(h-76)*(v-lo)/sp;
+ x.lineWidth=3;x.lineJoin='round';x.lineCap='round';x.strokeStyle='#9AD3EA';x.beginPath();hs.forEach((q,i)=>x[i?'lineTo':'moveTo'](px(i),py(q.temp)));x.stroke();
+ x.fillStyle='#fff';x.beginPath();x.arc(px(0),py(t[0]),6,0,7);x.fill();
+ x.font='600 22px system-ui,sans-serif';x.fillStyle='#B7C5CC';x.textAlign='left';x.fillText('ahora',10,h-4);x.textAlign='right';x.fillText('+24 h',w-10,h-4);
+ const im=t.indexOf(hi),il=t.indexOf(lo);x.textAlign='center';x.fillStyle='#F2B24D';x.fillText(Math.round(hi)+'°',px(im),py(hi)-12);if(il!=im){x.fillStyle='#9AD3EA';x.fillText(Math.round(lo)+'°',px(il),py(lo)+26)}}
+
+/* --- Hoy --- */
+const wdir=d=>['norte','noreste','este','sureste','sur','suroeste','oeste','noroeste'][Math.round(d/45)%8];
+const uvTxt=v=>{v=Math.round(v||0);return 'Radiación UV máxima de hoy: '+v+' ('+(v<=2?'baja':v<=5?'moderada: usa gorra':v<=7?'alta: usa protector solar':v<=10?'muy alta: evita el sol del mediodía':'extrema: evita salir al sol')+').'};
+function rainBanner(hs){const n=hs.slice(0,12),f=n.find(q=>(q.pp||0)>=50),mx=Math.max(0,...n.map(q=>q.pp||0));
+ return `<div class="card"><h2>${f?'Puede llover pronto':'Sin lluvia prevista'}</h2><p class="sm">${f?'Es probable que llueva a eso de las '+f.t.slice(11,13)+' h ('+f.pp+'% de probabilidad). Lleva paraguas.':'En las próximas 12 horas la probabilidad máxima de lluvia es '+mx+'%.'}</p></div>`+'<div id="aqc"></div>'}
+async function aqLoad(){const e=$('#aqc');if(!e||!st.loc)return;
+ try{const d=await get('https://air-quality-api.open-meteo.com/v1/air-quality?latitude='+st.loc.lat.toFixed(3)+'&longitude='+st.loc.lon.toFixed(3)+'&current=us_aqi,pm2_5&timezone=auto'),a=d&&d.current&&d.current.us_aqi;
+  if(a==null||!$('#aqc'))return;const q=a<=50?['Buena','el aire está limpio']:a<=100?['Aceptable','personas muy sensibles deben cuidarse']:a<=150?['Regular','evita el ejercicio fuerte afuera']:a<=200?['Mala','reduce el tiempo al aire libre']:['Muy mala','quédate en lugares cerrados'];
+  $('#aqc').innerHTML=`<div class="card"><h2>Calidad del aire: ${q[0]}</h2><p class="sm">Índice ${Math.round(a)}${d.current.pm2_5!=null?' · partículas PM2.5 '+Math.round(d.current.pm2_5)+' µg/m³':''}. ${q[1][0].toUpperCase()+q[1].slice(1)}.</p></div>`}catch(e){}}
+async function wxv(v){
+ if(!st.loc){v.innerHTML=locCard(true);return}
+ if(!wxFresh())v.innerHTML='<div class="card"><h2>Clima</h2><p class="sm">Cargando pronóstico…</p></div>';
+ let note='';
+ try{await wxLoad()}catch(e){
+  if(!wxFresh()){if(inRoute('#/clima'))v.innerHTML='<div class="card"><h2>No se pudo cargar el clima</h2><p class="sm">Revisa tu conexión e inténtalo de nuevo.</p><button class="btn p w" onclick="wxLoad(true).then(render).catch(render)">Reintentar</button></div>'+locCard();return}
+  note='Sin conexión: se muestran los últimos datos guardados.'}
+ if(!inRoute('#/clima')||!wxFresh())return;
+ wxHero();
+ const c=wx.current,u=wx.daily,hs=hrs24(),lo=Math.min(...u.temperature_2m_min),hi=Math.max(...u.temperature_2m_max),sp=(hi-lo)||1;
+ v.innerHTML=(note?`<p class="sm">${note}</p>`:'')+rainBanner(hs)+
+ `<div class="card"><h2>Próximas horas</h2><div class="hrs">${hs.map((q,i)=>`<div class="hr"><span>${i?q.t.slice(11,13)+' h':'Ahora'}</span>${ico(wxInfo(q.code)[1],'ic')}<b>${Math.round(q.temp)}°</b><span class="pp">${q.pp??0}%</span></div>`).join('')}</div><p class="sm">El porcentaje azul es la probabilidad de lluvia.</p></div>`+
+ `<div class="card"><h2>Detalles</h2><div class="det"><div>Sensación <b>${Math.round(c.apparent_temperature)}°</b></div><div>Humedad <b>${Math.round(c.relative_humidity_2m)}%</b></div><div>Viento <b>${Math.round(c.wind_speed_10m)} km/h</b></div><div>Lluvia ahora <b>${c.precipitation||0} mm</b></div><div>UV máximo hoy <b>${Math.round(u.uv_index_max?u.uv_index_max[0]:0)}</b></div><div>Sol <b>${hhmm(u.sunrise&&u.sunrise[0])} – ${hhmm(u.sunset&&u.sunset[0])}</b></div>${c.wind_direction_10m!=null?`<div>Viento desde <b>${wdir(c.wind_direction_10m)}</b></div>`:''}${c.wind_gusts_10m!=null?`<div>Ráfagas <b>${Math.round(c.wind_gusts_10m)} km/h</b></div>`:''}${c.cloud_cover!=null?`<div>Nubes <b>${Math.round(c.cloud_cover)}%</b></div>`:''}${c.pressure_msl!=null?`<div>Presión <b>${Math.round(c.pressure_msl)} hPa</b></div>`:''}</div><p class="sm">${uvTxt(u.uv_index_max?u.uv_index_max[0]:0)}</p></div>`+
+ `<div class="card"><h2>Próximos días</h2>${u.time.map((t,k)=>{const a=u.temperature_2m_min[k],b=u.temperature_2m_max[k],x=wxInfo(u.weather_code[k]),l=(a-lo)/sp*100,w=Math.max(8,(b-a)/sp*100),dn=k==0?'Hoy':k==1?'Mañana':new Date(t+'T12:00:00').toLocaleDateString('es',{weekday:'long'});
+  return `<div class="dy"><b style="text-transform:capitalize">${dn}</b>${ico(x[1],'ic')}<div><div class="tt"><span>${Math.round(a)}°</span><span>${Math.round(b)}°</span></div><div class="rg" title="${x[0]}"><i style="left:${l}%;width:${Math.min(w,100-l)}%"></i></div></div><span class="ll">${u.precipitation_probability_max[k]??0}% lluvia</span></div>`}).join('')}</div>`+
+ `<p class="sm">Pronóstico de <a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color:inherit">Open-Meteo.com</a>. Se actualiza cada 30 minutos.</p>`;aqLoad()}
+
+/* --- Mapa del clima: temperatura, lluvia o viento en una cuadrícula de puntos de la zona --- */
+const RAMP={t:{min:-5,max:35,c:['#4D8FC9','#F2C14E','#E4472B'],u:'°',l:'Temperatura'},r:{min:0,max:100,c:['#EAF2F6','#1F6FA8'],u:'%',l:'Probabilidad de lluvia hoy'},w:{min:0,max:60,c:['#E6EEF0','#2F5D6B'],u:'',l:'Viento (km/h)'}};
+let wlay=LS('sa3lay','t');if(!RAMP[wlay])wlay='t';
+let wmk=null,wgrid=null,radarL=null;
+const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+function rampColor(r,v){const t=Math.max(0,Math.min(1,(v-r.min)/(r.max-r.min))),n=r.c.length-1,i=Math.min(n-1,Math.floor(t*n)),f=t*n-i,a=hex(r.c[i]),b=hex(r.c[i+1]),m=a.map((x,k)=>Math.round(x+(b[k]-x)*f));
+ return{bg:'rgb('+m.join(',')+')',fg:(0.299*m[0]+0.587*m[1]+0.114*m[2])>150?'#17232B':'#fff'}}
+const wnote=t=>{const e=$('#wmn');if(e)e.textContent=t};
+const nlon=x=>((x+540)%360)-180,nlat=x=>Math.max(-85,Math.min(85,x));
+async function wGridLoad(){
+ if(!map)return;const b=map.getBounds(),n=5,S0=b.getSouth(),W0=b.getWest(),dl=b.getNorth()-S0,dn=b.getEast()-W0,pts=[];
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++)pts.push([nlat(S0+dl*(.1+.8*i/(n-1))),nlon(W0+dn*(.1+.8*j/(n-1)))]);
+ wnote('Cargando el clima de la zona…');
+ try{const d=await get('https://api.open-meteo.com/v1/forecast?latitude='+pts.map(p=>p[0].toFixed(2)).join(',')+'&longitude='+pts.map(p=>p[1].toFixed(2)).join(',')+'&current=temperature_2m,weather_code,wind_speed_10m&daily=precipitation_probability_max&timezone=auto&forecast_days=1'),a=Array.isArray(d)?d:[d];
+  if(!map)return;wgrid={pts,d:a,t:Date.now(),hl:dl*.1,hn:dn*.1};wDraw()}
+ catch(e){wnote('No se pudo cargar el clima del mapa. Revisa tu conexión.')}}
+/* Mapa base con respaldo: si un proveedor bloquea o falla, pasa solo al siguiente */
+const TILES=[['https://{s}.basemaps.cartocdn.com/rastervoyager/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19,attribution:'© OpenStreetMap · © CARTO'}],['https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}],['https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Tiles © Esri'}]];
+function baseMap(){let k=0,errs=0,cur=null;const g=L.layerGroup();
+ const put=()=>{if(cur)g.removeLayer(cur);cur=L.tileLayer(TILES[k][0],TILES[k][1]);errs=0;let ok=0;const me=cur;me.on('tileload',()=>{ok=1});me.on('tileerror',()=>{if(++errs>=4&&k<TILES.length-1){k++;put()}});setTimeout(()=>{if(me===cur&&!ok&&k<TILES.length-1&&navigator.onLine!==false){k++;put()}},7000);g.addLayer(cur)};put();return g}
+const zona=(i,j)=>{const v=i<=1?'sur':i>=3?'norte':'',h=j<=1?'oeste':j>=3?'este':'';return !v&&!h?'centro':v&&h?v+h:(v||h)};
+function wDraw(){
+ if(!map||!wgrid||!wmk)return;wmk.clearLayers();const r=RAMP[wlay],n=5,cells=[];
+ wgrid.pts.forEach((p,i)=>{const o=wgrid.d[i];if(!o||!o.current)return;
+  const v=wlay=='t'?o.current.temperature_2m:wlay=='r'?(o.daily&&o.daily.precipitation_probability_max?o.daily.precipitation_probability_max[0]:null):o.current.wind_speed_10m;
+  if(v==null)return;const col=rampColor(r,v),info=wxInfo(o.current.weather_code),z=zona(Math.floor(i/n),i%n);cells.push({p,v,z,i});
+  L.rectangle([[p[0]-wgrid.hl,p[1]-wgrid.hn],[p[0]+wgrid.hl,p[1]+wgrid.hn]],{stroke:false,fillColor:col.bg,fillOpacity:.58})
+   .bindPopup(`<b>Zona ${z}</b><br>${info[0]} · ${Math.round(o.current.temperature_2m)}°<br>Viento ${Math.round(o.current.wind_speed_10m)} km/h · lluvia ${o.daily&&o.daily.precipitation_probability_max?Math.round(o.daily.precipitation_probability_max[0]):'—'}%`).addTo(wmk)});
+ /* Solo se escriben 3 números: tu lugar y los extremos de la zona; el resto se ve por color */
+ const lab=(p,txt,cls)=>L.marker(p,{icon:L.divIcon({className:'wl '+cls,html:'<b>'+txt+'</b>',iconSize:null}),interactive:false,keyboard:false}).addTo(wmk);
+ if(cells.length){const hi=cells.reduce((a,c)=>c.v>a.v?c:a),lo=cells.reduce((a,c)=>c.v<a.v?c:a),nm={t:['Cálido','Fresco'],r:['Lluvia','Seco'],w:['Ventoso','Calma']}[wlay],fm=x=>Math.round(x)+r.u+(wlay=='w'?' km/h':'');
+  if(hi.v!==lo.v){lab(hi.p,nm[0]+' '+fm(hi.v),'hi');lab(lo.p,nm[1]+' '+fm(lo.v),'lo')}
+  const me=cells.reduce((a,c)=>!a||km(st.loc.lat,st.loc.lon,c.p[0],c.p[1])<km(st.loc.lat,st.loc.lon,a.p[0],a.p[1])?c:a,null);if(me)lab([st.loc.lat,st.loc.lon],'Tú '+fm(me.v),'me')}
+ const g='linear-gradient(90deg,'+r.c.join(',')+')';
+ $('#wleg').innerHTML=`<div class="lgd"><span>${r.min}${r.u}</span><i style="background:${g}"></i><span>${r.max}${r.u}${wlay=='w'?'+':''}</span></div><p class="sm">${r.l}. Cada recuadro de color es una zona: toca uno para ver el detalle. Los números marcan tu lugar y los extremos.</p>`;
+ wnote(cells.length?'Clima de '+cells.length+' zonas · '+new Date(wgrid.t).toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'}):'No hay datos para esta zona.')}
+function setLay(k){wlay=k;S('sa3lay',k);document.querySelectorAll('.chp[data-l]').forEach(b=>{const on=b.dataset.l==k;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});wDraw()}
+async function toggleRadar(){
+ const b=$('#rdb');if(!map||!b)return;
+ if(radarL){map.removeLayer(radarL);radarL=null;b.classList.remove('on');b.setAttribute('aria-pressed','false');wDraw();return}
+ b.classList.add('on');b.setAttribute('aria-pressed','true');wnote('Cargando el radar de lluvia…');
+ try{const j=await get('https://api.rainviewer.com/public/weather-maps.json'),f=j.radar.past[j.radar.past.length-1];if(!map)return;
+  radarL=L.tileLayer(j.host+f.path+'/256/{z}/{x}/{y}/2/1_1.png',{opacity:.65,maxNativeZoom:7,maxZoom:18,attribution:'Radar: RainViewer'}).addTo(map);wnote('Radar de lluvia de '+ago(f.time*1000)+'. Los colores indican la intensidad.')}
+ catch(e){b.classList.remove('on');b.setAttribute('aria-pressed','false');wnote('El radar de lluvia no está disponible ahora.')}}
+function wmapv(v){if(typeof L=='undefined'){v.innerHTML='<div class="card"><h2>El mapa necesita internet</h2><p class="sm">No se pudo cargar el mapa. Conéctate a internet y vuelve a intentarlo.</p><button class="btn p w" onclick="location.reload()">Reintentar</button></div>';return}
+ if(!st.loc){v.innerHTML=locCard(true);return}
+ radarL=null;
+ v.innerHTML=`<div class="card" style="padding:12px"><div class="chips" role="group" aria-label="Qué mostrar en el mapa">${[['t','Temperatura'],['r','Lluvia'],['w','Viento']].map(a=>`<button class="chp${wlay==a[0]?' on':''}" data-l="${a[0]}" aria-pressed="${wlay==a[0]}" onclick="setLay('${a[0]}')">${a[1]}</button>`).join('')}<button class="chp" id="rdb" aria-pressed="false" onclick="toggleRadar()">Radar de lluvia</button></div><div id="map"></div><p class="sm" id="wmn">Cargando mapa…</p><div id="wleg"></div><button class="btn w" onclick="wGridLoad()">Ver el clima de esta zona</button></div>`;
+ map=L.map('map',{zoomControl:true}).setView([st.loc.lat,st.loc.lon],11);
+ baseMap().addTo(map);
+ wmk=L.layerGroup().addTo(map);
+ L.circleMarker([st.loc.lat,st.loc.lon],{radius:6,color:'#fff',weight:2,fillColor:'#17232B',fillOpacity:1}).addTo(map).bindPopup('Tú');
+ wgrid=null;wGridLoad()}
+
+/* --- Estadísticas del clima: lluvia y temperatura por mes (historial de Open-Meteo) --- */
+async function wstatData(){
+ const k=locKey(),ms=months(),c=LS('sa3wst',null);if(c&&c.k==k&&c.m==ms[0].s&&Date.now()-c.t<432e5)return c.rows;
+ const p=x=>String(x).padStart(2,'0'),e=new Date(Date.now()-6*864e5),ed=e.getUTCFullYear()+'-'+p(e.getUTCMonth()+1)+'-'+p(e.getUTCDate());
+ const d=await get('https://archive-api.open-meteo.com/v1/archive?latitude='+st.loc.lat.toFixed(3)+'&longitude='+st.loc.lon.toFixed(3)+'&start_date='+ms[0].s+'&end_date='+ed+'&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto');
+ if(!d||!d.daily||!d.daily.time)throw 0;
+ const rows=ms.map(m=>({y:m.y,m:m.m,cur:m.cur,rain:0,hs:0,ls:0,n:0,wet:0}));
+ d.daily.time.forEach((t,i)=>{const r=rows.find(x=>x.y==+t.slice(0,4)&&x.m==+t.slice(5,7)-1),a=d.daily.temperature_2m_max[i],b=d.daily.temperature_2m_min[i],q=d.daily.precipitation_sum[i];
+  if(!r||a==null||b==null)return;r.n++;r.hs+=a;r.ls+=b;r.rain+=q||0;if((q||0)>=1)r.wet++});
+ rows.forEach(r=>{r.tmax=r.n?r.hs/r.n:null;r.tmin=r.n?r.ls/r.n:null});
+ S('sa3wst',{k,m:ms[0].s,t:Date.now(),rows});return rows}
+/* barras flotantes: de la mínima media a la máxima media de cada mes */
+function rbars(rows,aria){
+ const ok=rows.filter(r=>r.tmax!=null);if(!ok.length)return'';
+ const W=360,H=196,L0=34,R0=6,T=16,B=28,iw=W-L0-R0,ih=H-T-B,n=rows.length,sw=iw/n,bw=Math.min(18,sw-4);
+ const lo=Math.min(...ok.map(r=>r.tmin)),hi=Math.max(...ok.map(r=>r.tmax)),stp=(hi-lo)>30?10:5,a=Math.floor(lo/stp)*stp,b=Math.ceil(hi/stp)*stp,y=v=>T+ih-ih*((v-a)/((b-a)||1));
+ const iH=ok.indexOf(ok.reduce((m,r)=>r.tmax>m.tmax?r:m)),iC=ok.indexOf(ok.reduce((m,r)=>r.tmin<m.tmin?r:m));
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(aria)}">`;
+ for(let t=a;t<=b;t+=stp)s+=`<line x1="${L0}" x2="${W-R0}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)" stroke-width="1"/><text class="ax" x="${L0-6}" y="${y(t)+3}" text-anchor="end">${t}°</text>`;
+ rows.forEach((r,i)=>{const x=L0+sw*i+(sw-bw)/2,cx=x+bw/2;
+  s+=`<text class="ax" x="${cx}" y="${T+ih+12}" text-anchor="middle">${MESL[r.m].slice(0,3)}</text>`;
+  if(i==0||r.m==0)s+=`<text class="ax" x="${cx}" y="${T+ih+23}" text-anchor="middle">${r.y}</text>`;
+  if(r.tmax!=null){const y1=y(r.tmax),y2=Math.max(y(r.tmin),y1+4);
+   s+=`<rect x="${x}" y="${y1}" width="${bw}" height="${y2-y1}" rx="4" fill="var(--wb)"${r.cur?' opacity=".55"':''}/>`;
+   if(r==ok[iH])s+=`<text class="lab" x="${cx}" y="${y1-4}">${Math.round(r.tmax)}°</text>`;
+   if(r==ok[iC]&&iC!=iH)s+=`<text class="lab" x="${cx}" y="${y2+11}">${Math.round(r.tmin)}°</text>`}
+  s+=`<rect data-i="${i}" x="${L0+sw*i}" y="${T}" width="${sw}" height="${ih+14}" fill="transparent"/>`});
+ return s+'</svg><div class="tip"></div>'}
+async function wstatv(v){
+ if(!st.loc){v.innerHTML=locCard(true);return}
+ v.innerHTML=`<div class="card"><h2>Clima de los últimos 12 meses</h2><p class="sm" id="wsn">Cargando el historial de ${esc(st.loc.name)}…</p></div><div id="wsr"></div>`;
+ const key=locKey();
+ try{const rows=await wstatData();if(!inRoute('#/clima/stats')||locKey()!=key)return;
+  const ok=rows.filter(r=>r.tmax!=null),rain=rows.reduce((a,r)=>a+r.rain,0),wet=rows.reduce((a,r)=>a+r.wet,0),wr=rows.reduce((a,r)=>!a||r.rain>a.rain?r:a,null),hot=ok.reduce((a,r)=>!a||r.tmax>a.tmax?r:a,null),cold=ok.reduce((a,r)=>!a||r.tmin<a.tmin?r:a,null);
+  $('#wsn').textContent='Datos históricos de '+st.loc.name+'. Fuente: Open-Meteo.';
+  const nm=r=>MESL[r.m]+' '+r.y,b=t=>`<b style="color:var(--tx)">${t}</b>`;
+  $('#wsr').innerHTML=`<div class="card"><p class="big">${fmtN(Math.round(rain))} mm</p><p class="sm">de lluvia en 12 meses · ${wet} días con lluvia</p>${wr&&wr.rain>0?`<p class="sm" style="margin-top:10px">Mes más lluvioso: ${b(nm(wr))} (${fmtN(Math.round(wr.rain))} mm)</p>`:''}${hot?`<p class="sm">Mes más cálido: ${b(MESL[hot.m])} (máxima media ${hot.tmax.toFixed(0)}°). Más fresco: ${b(MESL[cold.m])} (mínima media ${cold.tmin.toFixed(0)}°)</p>`:''}</div>
+  <div class="card"><h2>Lluvia por mes</h2><div class="chart" id="w1">${bars(rows,r=>r.rain,{ticks:ticksFor(Math.max(...rows.map(r=>r.rain),1)),fmt:n=>fmtN(Math.round(n)),fill:()=>'var(--wb)',aria:'Milímetros de lluvia por mes durante los últimos 12 meses'})}</div><p class="sm">Milímetros de lluvia de cada mes. La barra más clara es el mes en curso, todavía incompleto.</p></div>
+  <div class="card"><h2>Temperatura por mes</h2><div class="chart" id="w2">${rbars(rows,'Temperatura mínima y máxima media de cada mes durante los últimos 12 meses')}</div><p class="sm">Cada barra va de la mínima media a la máxima media del mes.</p>
+  <details><summary>Ver como tabla</summary><table><thead><tr><th>Mes</th><th class="n">Lluvia</th><th class="n">Mín.</th><th class="n">Máx.</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${nm(r)}${r.cur?' (en curso)':''}</td><td class="n">${fmtN(Math.round(r.rain))} mm</td><td class="n">${r.tmin!=null?r.tmin.toFixed(1)+'°':'—'}</td><td class="n">${r.tmax!=null?r.tmax.toFixed(1)+'°':'—'}</td></tr>`).join('')}</tbody></table></details></div>
+  <p class="sm">Los últimos días del mes en curso pueden faltar: el historial se publica con unos 5 días de retraso.</p>`;
+  tipBind($('#w1'),i=>nm(rows[i])+'<br>'+fmtN(Math.round(rows[i].rain))+' mm · '+rows[i].wet+' días con lluvia');
+  tipBind($('#w2'),i=>nm(rows[i])+'<br>'+(rows[i].tmax!=null?rows[i].tmin.toFixed(1)+'° a '+rows[i].tmax.toFixed(1)+'° en promedio':'Sin datos'))}
+ catch(e){if(!inRoute('#/clima/stats'))return;$('#wsn').textContent='No se pudo cargar el historial. Revisa tu conexión.';$('#wsr').innerHTML='<button class="btn p w" onclick="render()">Reintentar</button>'}}
+
+/* ===== Estadísticas por mes (historial de USGS) ===== */
+const MESL=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+let stSc=LS('sa2ss','mundo'),stMin=LS('sa2sm',4.5);
+const USGS='https://earthquake.usgs.gov/fdsnws/event/1/';
+function months(){const n=new Date(),y=n.getUTCFullYear(),m=n.getUTCMonth(),p=x=>String(x).padStart(2,'0'),f=d=>d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate()),o=[];
+ for(let i=11;i>=0;i--){const s=new Date(Date.UTC(y,m-i,1)),e=i==0?new Date(Date.UTC(y,m,n.getUTCDate()+1)):new Date(Date.UTC(y,m-i+1,1));o.push({y:s.getUTCFullYear(),m:s.getUTCMonth(),s:f(s),e:f(e),cur:i==0})}return o}
+const statKey=()=>[stSc,stMin,stSc=='zona'?locKey()+','+D():'',months()[0].s].join('|');
+const usgsQ=(ep,mo,x)=>USGS+ep+'?format=geojson&starttime='+mo.s+'&endtime='+mo.e+'&minmagnitude='+stMin+(stSc=='zona'&&st.loc?'&latitude='+st.loc.lat.toFixed(3)+'&longitude='+st.loc.lon.toFixed(3)+'&maxradiuskm='+D():'')+(x||'');
+async function statData(){
+ const key=statKey(),c=LS('sa2stats',{});if(c[key]&&Date.now()-c[key].t<216e5)return c[key].rows;
+ const ms=months(),rows=[];
+ for(let i=0;i<ms.length;i+=4){rows.push(...await Promise.all(ms.slice(i,i+4).map(async mo=>{
+  const [n,m]=await Promise.all([get(usgsQ('count',mo)),get(usgsQ('query',mo,'&orderby=magnitude&limit=1'))]),f=m.features&&m.features[0];
+  return{...mo,n:n.count,max:f?f.properties.mag:null,place:f?f.properties.place:'',t:f?f.properties.time:null}})))}
+ const keep={};Object.keys(c).slice(-5).forEach(k=>keep[k]=c[k]);keep[key]={t:Date.now(),rows};S('sa2stats',keep);return rows}
+const nice=v=>{const p=10**Math.floor(Math.log10(v||1)),r=v/p;return(r<=1?1:r<=2?2:r<=5?5:10)*p};
+function ticksFor(max){const s=nice(Math.max(max,1)/4),t=[0];while(t[t.length-1]<Math.max(max,1))t.push(t[t.length-1]+s);return t}
+/* Gráfico de barras en SVG: barras desde cero, 4 px redondeados arriba, cuadrícula suave, etiqueta solo en el máximo y el último */
+function bars(rows,val,o){
+ const W=360,H=196,L=34,R=6,T=16,B=28,iw=W-L-R,ih=H-T-B,n=rows.length,sw=iw/n,bw=Math.min(18,sw-4),top=o.ticks[o.ticks.length-1]||1,y=v=>T+ih-ih*(v/top);
+ const vals=rows.map(val),mx=Math.max(...vals.map(v=>v==null?-1:v)),im=vals.indexOf(mx);
+ let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
+ o.ticks.forEach(t=>{s+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--grid)" stroke-width="1"/><text class="ax" x="${L-6}" y="${y(t)+3}" text-anchor="end">${o.fmt(t)}</text>`});
+ rows.forEach((r,i)=>{const v=vals[i],x=L+sw*i+(sw-bw)/2,cx=x+bw/2;
+  s+=`<text class="ax" x="${cx}" y="${T+ih+12}" text-anchor="middle">${MESL[r.m].slice(0,3)}</text>`;
+  if(i==0||r.m==0)s+=`<text class="ax" x="${cx}" y="${T+ih+23}" text-anchor="middle">${r.y}</text>`;
+  if(v!=null&&v>0){const h=ih*(v/top),yy=T+ih-h,fill=o.fill(v),op=r.cur?' opacity=".55"':'';
+   s+=h<6?`<rect x="${x}" y="${yy}" width="${bw}" height="${h}" fill="${fill}"${op}/>`:`<path d="M${x} ${T+ih}V${yy+4}Q${x} ${yy} ${x+4} ${yy}H${x+bw-4}Q${x+bw} ${yy} ${x+bw} ${yy+4}V${T+ih}Z" fill="${fill}"${op}/>`;
+   if(i==im||i==n-1)s+=`<text class="lab" x="${cx}" y="${yy-4}">${o.fmt(v)}</text>`}
+  s+=`<rect data-i="${i}" x="${L+sw*i}" y="${T}" width="${sw}" height="${ih+14}" fill="transparent"/>`});
+ return s+'</svg><div class="tip"></div>'}
+function tipBind(box,f){const svg=box.querySelector('svg'),tip=box.querySelector('.tip');if(!svg||!tip)return;
+ const show=e=>{const r=e.target.closest&&e.target.closest('[data-i]');if(!r){tip.style.display='none';return}
+  const b=r.getBoundingClientRect(),p=box.getBoundingClientRect();tip.innerHTML=f(+r.dataset.i);tip.style.display='block';
+  tip.style.left=Math.max(70,Math.min(p.width-70,b.left+b.width/2-p.left))+'px'};
+ svg.addEventListener('pointermove',show);svg.addEventListener('pointerdown',show);
+ svg.addEventListener('pointerleave',e=>{if(e.pointerType=='mouse')tip.style.display='none'})}
+function setS(k,v){if(k=='sc')stSc=v,S('sa2ss',v);else stMin=v,S('sa2sm',v);render()}
+async function statv(v){
+ if(stSc=='zona'&&!st.loc)stSc='mundo';
+ const chip=(on,txt,fn,dis)=>`<button class="chp${on?' on':''}"${dis?' disabled':''} onclick="${fn}" aria-pressed="${on}">${txt}</button>`;
+ const ctl=`<div class="card"><h2>Sismos por mes</h2><div class="chips" role="group" aria-label="Zona">${chip(stSc=='mundo','Todo el mundo',"setS('sc','mundo')")}${chip(stSc=='zona','En tu radio ('+D()+' km)',"setS('sc','zona')",!st.loc)}</div>
+ <div class="chips" role="group" aria-label="Magnitud mínima">${[3,4.5,5.5,6.5].map(m=>chip(stMin==m,'M'+m+' o más',"setS('mn',"+m+")")).join('')}</div><p class="sm" id="sst">Cargando los últimos 12 meses…</p></div><div id="sres"></div>`;
+ v.innerHTML=ctl;const key=statKey();
+ try{const rows=await statData();if((location.hash||'#/')!='#/stats'||statKey()!=key)return;
+  const where=stSc=='zona'?'en tus '+D()+' km':'en el mundo',total=rows.reduce((a,r)=>a+r.n,0),best=rows.reduce((a,r)=>r.max!=null&&(!a||r.max>a.max)?r:a,null);
+  $('#sst').textContent='Últimos 12 meses, M'+stMin+' o más, '+where+'. Fuente: USGS.';
+  const nm=r=>MESL[r.m]+' '+r.y,band=m=>m>=7?'var(--magma)':m>=5.5?'var(--ocre)':'var(--bar)';
+  $('#sres').innerHTML=`<div class="card"><p class="big">${fmtN(total)}</p><p class="sm">sismos de M${stMin} o más ${where} en 12 meses</p>${best?`<p class="sm" style="margin-top:10px">El más fuerte: <b style="color:var(--tx)">M${best.max.toFixed(1)}</b> · ${esc(best.place)} · ${new Date(best.t).toLocaleDateString('es',{day:'numeric',month:'short',year:'numeric'})}</p>`:`<p class="sm" style="margin-top:10px">No hubo sismos con estos filtros.</p>`}</div>
+  <div class="card"><h2>Cantidad por mes</h2><div class="chart" id="c1">${bars(rows,r=>r.n,{ticks:ticksFor(Math.max(...rows.map(r=>r.n))),fmt:fmtN,fill:()=>'var(--bar)',aria:'Cantidad de sismos por mes durante los últimos 12 meses, '+where})}</div><p class="sm">La barra más clara es el mes en curso, todavía incompleto.</p></div>
+  <div class="card"><h2>Magnitud máxima por mes</h2><div class="chart" id="c2">${bars(rows,r=>r.max,{ticks:[0,3,6,9],fmt:n=>Number.isInteger(n)?String(n):n.toFixed(1),fill:band,aria:'Magnitud máxima de cada mes durante los últimos 12 meses, '+where})}</div>
+  <div class="lg"><span><i style="background:var(--bar)"></i>Menos de 5,5</span><span><i style="background:var(--ocre)"></i>5,5 a 6,9</span><span><i style="background:var(--magma)"></i>7 o más</span></div>
+  <details><summary>Ver como tabla</summary><table><thead><tr><th>Mes</th><th class="n">Sismos</th><th class="n">Máx.</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${nm(r)}${r.cur?' (en curso)':''}</td><td class="n">${fmtN(r.n)}</td><td class="n">${r.max!=null?r.max.toFixed(1):'—'}</td></tr>`).join('')}</tbody></table></details></div>
+  <p class="sm">Los datos de los meses recientes pueden cambiar cuando los sismólogos revisan cada evento.</p>`;
+  tipBind($('#c1'),i=>nm(rows[i])+'<br>'+fmtN(rows[i].n)+' sismos');
+  tipBind($('#c2'),i=>nm(rows[i])+'<br>'+(rows[i].max!=null?'Máx. M'+rows[i].max.toFixed(1):'Sin sismos'))}
+ catch(e){if((location.hash||'#/')!='#/stats')return;$('#sst').textContent='No se pudo cargar el historial. Revisa tu conexión.';$('#sres').innerHTML=`<button class="btn p w" onclick="render()">Reintentar</button>`}}
+
+/* ===== Vistas ===== */
+const near=()=>ev.filter(e=>st.loc&&dist(e)<=Math.max(D(),fuerte(e.mag)));
+/* ===== Borrar y seleccionar (solo en este teléfono; el servidor no se toca) ===== */
+const SEL={on:false,ctx:'',ids:new Set(),list:[]};
+let DEL=Object.assign({h:{t:0,s:[]},b:{t:0,s:[]}},LS('sa4del',{}));
+const isDel=(k,e)=>{const d=DEL[k];return e.t<=d.t||d.s.some(x=>Math.abs(x[0]-e.t)<9e4&&km(x[1],x[2],e.lat,e.lon)<120)};
+const delN=k=>DEL[k].t>0||DEL[k].s.length>0;
+function repaintSel(){const y=scrollY;SEL.ctx=='h'?hxPaint(1):bandeja($('#v'));scrollTo(0,y)}
+function selStart(k){SEL.on=true;SEL.ctx=k;SEL.ids=new Set();repaintSel()}
+function selStop(){SEL.on=false;SEL.ids=new Set();repaintSel()}
+function selToggle(id){SEL.ids.has(id)?SEL.ids.delete(id):SEL.ids.add(id);repaintSel()}
+function selAll(){SEL.ids=new Set(SEL.list.map(e=>e.id));repaintSel()}
+function selDelete(){if(!SEL.ids.size)return;const k=SEL.ctx;if(!confirm('¿Borrar '+SEL.ids.size+' sismo(s) de '+(k=='h'?'el historial':'la bandeja')+'? Solo se borran de este teléfono y se pueden restaurar.'))return;
+ SEL.list.filter(e=>SEL.ids.has(e.id)).forEach(e=>DEL[k].s.push([e.t,e.lat,e.lon]));S('sa4del',DEL);SEL.on=false;SEL.ids=new Set();repaintSel()}
+function delAll(k){if(!confirm('¿Borrar '+(k=='h'?'todo el historial':'toda la bandeja')+'? Solo se borra de este teléfono, no del servidor, y se puede restaurar.'))return;DEL[k]={t:Date.now(),s:[]};S('sa4del',DEL);SEL.on=false;SEL.ids=new Set();k=='h'?hxPaint():bandeja($('#v'));}
+function delUndo(k){DEL[k]={t:0,s:[]};S('sa4del',DEL);k=='h'?hxPaint():bandeja($('#v'))}
+const selBar=()=>SEL.on?`<div class="selbar"><button class="btn" onclick="selStop()">Cancelar</button><button class="btn" onclick="selAll()">Todos</button><button class="btn p" onclick="selDelete()">Borrar (${SEL.ids.size})</button></div>`:'';
+const delBtns=k=>`<div class="acts">${SEL.on&&SEL.ctx==k?'<button class="mini" onclick="selStop()">Cancelar selección</button>':`<button class="mini" onclick="selStart('${k}')">Seleccionar</button>`}<button class="mini dng" onclick="delAll('${k}')">${k=='h'?'Borrar el historial':'Borrar bandeja'}</button></div>${delN(k)?`<button class="lnk" style="background:none;border:0;margin-top:8px;padding:0" onclick="delUndo('${k}')">↺ Restaurar lo borrado</button>`:''}`;
+const row=e=>{const d=dist(e),ck=SEL.on?`<span class="ck${SEL.ids.has(e.id)?' on':''}">✓</span>`:'';return `<button class="ev" data-id="${esc(e.id)}" aria-label="${SEL.on?'Seleccionar':'Ver'} M${e.mag.toFixed(1)}">${ck}<div class="mg ${cl(e.mag)}">${e.mag.toFixed(1)}</div><div><b>${esc(e.place)}</b><span class="sm">${ago(e.t)}${d!=null?' · a '+d+' km':''} · ${e.src}</span></div></button>`};
+function hero(){const ok=SRC.filter(x=>x.ok).length;
+ $('#hero').innerHTML=`<div class="top"><span class="mark">SismoAlerta</span><a class="sw" href="#/clima">Ver clima${CH}</a></div><div class="stl"><span class="dot ${ok?'ok':'no'}"></span>${ok} de ${SRC.length} fuentes${st.loc?' · '+esc(st.loc.name):' · sin ubicación'}</div>`}
+let sgRaf;function sg(){const c=$('#sg');if(!c)return;cancelAnimationFrame(sgRaf);const w=c.width=c.clientWidth*2,h=c.height=152,x=c.getContext('2d');
+ const quiet=!near().some(e=>Date.now()-e.t<864e5&&e.mag>=4.5),amp=quiet?6:26,pts=Array.from({length:Math.ceil(w/4)},()=>0);
+ const step=()=>{pts.shift();pts.push((Math.random()-.5)*amp*(Math.random()<.04?4:1));x.clearRect(0,0,w,h);x.beginPath();pts.forEach((v,i)=>x[i?'lineTo':'moveTo'](i*4,h/2+v));x.strokeStyle=quiet?'#818CF8':'#E11D48';x.lineWidth=3;x.lineJoin='round';x.stroke();if(!matchMedia('(prefers-reduced-motion:reduce)').matches)sgRaf=requestAnimationFrame(step)};
+ for(let i=0;i<pts.length;i++){pts.shift();pts.push((Math.random()-.5)*amp)}step()}
+function strip(){const d=ev.filter(e=>Date.now()-e.t<864e5&&e.mag>=4.5),top=d.reduce((a,e)=>!a||e.mag>a.mag?e:a,null),np=new Set(d.map(e=>pais(e.place))).size;
+ return `<div class="strip"><div><b>${d.length}</b><span>Sismos M4.5+ en 24 h</span></div><div><b>${top?top.mag.toFixed(1):'0.0'}</b><span>Máx. magnitud</span></div><div><b>${np}</b><span>Países o regiones</span></div></div>`}
+function setF(m){flt=m;S('sa2f',m);render()}
+/* ===== Ventanita al tocar un sismo: ver el mapa o ir al canal oficial de la fuente ===== */
+const FUENTES={USGS:{n:'USGS (Servicio Geológico de EE. UU.)',u:i=>'https://earthquake.usgs.gov/earthquakes/eventpage/'+i},EMSC:{n:'EMSC (Centro Sismológico Euro-Mediterráneo)',u:i=>'https://www.seismicportal.eu/eventdetails.html?unid='+i},GEOFON:{n:'GEOFON (GFZ, Alemania)',u:i=>'https://geofon.gfz-potsdam.de/eqinfo/event.php?id='+i},INGV:{n:'INGV (Italia)',u:i=>'http://terremoti.ingv.it/event/'+i}};
+const PRE={USGS:['us','sbu'],EMSC:['em','sbe'],GEOFON:['GEOFON','sbg'],INGV:['INGV','sbi']};
+function rawId(e){const p=PRE[e.src]||[];for(const x of p)if(String(e.id).startsWith(x))return String(e.id).slice(x.length);return String(e.id)}
+function findEv(id){return [...ev,...mes.d,...HX.rows,...(window.hist||[])].find(x=>x.id==id)}
+function openSh(id){const e=findEv(id);if(!e){goMap(id);return}
+ const f=FUENTES[e.src],d=dist(e),ec=/ecuador/i.test(e.place||'');
+ let b=`<button class="btn p w" onclick="shGo('${esc(id)}')">Ver el mapa</button>`;
+ if(f)b+=`<a class="btn w" href="${esc(f.u(encodeURIComponent(rawId(e))))}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none">Ir al canal oficial · ${esc(e.src)} ↗</a>`;
+ if(ec)b+=`<a class="btn w" href="https://www.igepn.edu.ec/" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none">Instituto Geofísico (IG-EPN) ↗</a>`;
+ $('#shc').innerHTML=`<div class="shh"><div class="mg ${cl(e.mag)}">${e.mag.toFixed(1)}</div><div><b>${esc(e.place)}</b><span class="sm" style="display:block">${ago(e.t)}${d!=null?' · a '+fmtN(d)+' km de ti':''}</span></div></div>${b}<p class="sm" style="text-align:center;margin:8px 0 2px">${f?'Fuente: '+esc(f.n):'Fuente: '+esc(e.src||'servidor')}</p><button class="btn w" onclick="closeSh()">Cerrar</button>`;
+ $('#sh').classList.add('on');$('#shc').querySelector('button').focus()}
+function closeSh(){$('#sh').classList.remove('on')}
+function shGo(id){closeSh();goMap(id)}
+addEventListener('keydown',e=>{if(e.key=='Escape')closeSh()});
+
+function goMap(id){if(!ev.some(x=>x.id==id)){const h=(window.hist||[]).find(x=>x.id==id);if(h)ev=[...ev,h]}focus=id;location.hash='#/map'}
+let q='';let lastCsv=[];
+function cercano(){const d=ev.filter(e=>Date.now()-e.t<864e5&&e.mag>=4.5);if(!d.length)return null;return st.loc?d.reduce((a,e)=>!a||dist(e)<dist(a)?e:a,null):d.reduce((a,e)=>!a||e.mag>a.mag?e:a,null)}
+function dlCsv(){const f=x=>'"'+String(x).replace(/"/g,'""')+'"',r=['fecha_hora,magnitud,lugar,latitud,longitud,distancia_km,fuente'].concat(lastCsv.map(e=>[new Date(e.t).toISOString(),e.mag,f(e.place),e.lat,e.lon,dist(e)??'',e.src].join(',')));
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+r.join('\n')],{type:'text/csv'}));a.download='historial-sismos.csv';document.body.appendChild(a);a.click();a.remove()}
+async function probarCanales(){const o=$('#ckr'),b=$('#ckb');b.disabled=true;o.textContent='Enviando pruebas…';
+ try{const r=await fetch(SB.url+'/functions/v1/sismo-canales',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB.key,Authorization:'Bearer '+SB.key},body:JSON.stringify({accion:'prueba'})}),j=await r.json();
+  if(!r.ok||!j.ok){o.textContent=j.error||j.message||'No se pudo probar (error '+r.status+').';b.disabled=false;return}
+  const n={slack:'Slack',gmail:'Gmail',sms:'SMS'};o.innerHTML=Object.keys(n).map(c=>{const v=String(j.resultado[c]);return (v.split(',').every(x=>x=='ok')?'✅ ':v=='no configurado'?'⚪ ':'❌ ')+n[c]+': '+(v=='ok'?'enviado':esc(v))}).join('<br>')+'<br>Revisa tu canal de Slack, tu correo y tu celular.'}
+ catch(e){o.textContent='No se pudo conectar. Revisa que la función sismo-canales esté instalada.'}b.disabled=false}
+function setQ(x){q=x;const l=$('#lst');if(l)l.innerHTML=lstH()}
+function lstH(){const t=q.trim().toLowerCase(),a=ev.filter(e=>e.mag>=flt&&(!t||(e.place||'').toLowerCase().includes(t))).sort((x,y)=>y.t-x.t).slice(0,50),l=a.slice(0,10);lastCsv=a;return l.map(row).join('')||'<p class="sm">No hay sismos para mostrar con este filtro. Si no tienes internet, verás aquí los últimos guardados.</p>'}
+const QH=['Agáchate, cúbrete la cabeza y sujétate de algo firme.','Aléjate de ventanas, espejos y objetos que puedan caer.','No uses ascensores. Si estás afuera, ve a un lugar abierto.','Si estás en la costa y el temblor fue fuerte o largo, sube a zona alta sin esperar aviso.'];
+function home(v){const c=cercano(),bj=bjList(1000,7,0),ok=SRC.filter(s=>s.ok).length;
+ const cn=c?`<div class="card cn"><p class="lbl">El más cercano a ti hoy</p><div class="bigm">M${c.mag.toFixed(1)}</div><span class="pill">${dist(c)!=null?'a '+fmtN(dist(c))+' km':'en el mundo'}</span><p class="sm" style="margin:8px 0 0">${esc(c.place)} · ${ago(c.t)}</p><canvas id="sg"></canvas></div>`:`<div class="card cn"><p class="lbl">El más cercano a ti hoy</p><p class="sm">Sin sismos recientes de M4.5 o más.</p><canvas id="sg"></canvas></div>`;
+ v.innerHTML='<div class="c1">'+(st.loc?'':`<div class="card"><h2>Empieza por tu ubicación</h2><p class="sm">Úsala para avisarte según la distancia al epicentro.</p><button class="btn p w" onclick="gps()">Usar mi ubicación</button></div>`)+cn+strip()+
+ `<div class="card"><div class="hd"><p class="lbl">Los 10 últimos sismos · todo el mundo</p></div>
+ <input type="text" class="srch" placeholder="Buscar lugar o país" aria-label="Buscar lugar o país" value="${esc(q)}" oninput="setQ(this.value)">
+ <div class="chips" role="group" aria-label="Filtrar por magnitud">${[['Todos',0],['M4+',4],['M5+',5],['M6+',6]].map(a=>`<button class="chp${flt==a[1]?' on':''}" aria-pressed="${flt==a[1]}" onclick="setF(${a[1]})">${a[0]}</button>`).join('')}</div>
+ <div class="list" id="lst">${lstH()}</div><a class="btn p w" href="#/historial" style="display:block;text-align:center;text-decoration:none">Ver todo el historial</a><p class="sm">${ok} de ${SRC.length} fuentes activas${lastOk?' · actualizado '+ago(lastOk):''}</p></div>`+'</div><div class="c2">'+
+ `<div class="card"><div class="hd"><p class="lbl">Bandeja</p><a class="lnk" href="#/inbox">Abrir Bandeja →</a></div>${!st.loc?'<p class="sm">Define tu ubicación para ver los sismos a menos de 1000 km.</p>':bj.length?`<p class="sm" style="margin:0 0 4px"><b>${bj.length}</b> sismo${bj.length==1?'':'s'} a menos de 1000 km de ${esc(st.loc.name)} en los últimos 7 días</p><div class="list">${bj.slice(0,3).map(row).join('')}</div>`:'<p class="sm">No hay sismos registrados a menos de 1000 km.</p>'}</div>`+
+ `<div class="card"><h2>Qué hacer en un sismo</h2><ol class="qh">${QH.map(x=>'<li>'+x+'</li>').join('')}</ol></div>`+
+ `<p class="sm">Los datos internacionales llegan con minutos de retraso: sirven para informarte, no como alerta temprana de segundos.</p>`+'</div>';sg()}
+/* ===== Bandeja: sismos a menos de 1000 km de la ubicación escogida ===== */
+let BJ=Object.assign({r:1000,p:7,m:0},LS('sa4bj',{})),mes=LS('sa3mo',{t:0,d:[]}),mesBusy=false;window.hist=[];
+const pais=p=>{p=String(p||'').trim();const i=p.lastIndexOf(',');return(i>=0?p.slice(i+1):p.replace(/^.* of /,'')).trim()||'Sin nombre'};
+async function bjLoad(){if(mesBusy||Date.now()-mes.t<9e5)return;mesBusy=true;
+ try{const j=await get('https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson');
+  mes={t:Date.now(),d:SRC[0].parse(j).filter(e=>[e.mag,e.lat,e.lon,e.t].every(Number.isFinite))};S('sa3mo',mes)}catch(e){}
+ mesBusy=false;if((location.hash||'')=='#/inbox')bandeja($('#v'))}
+function bjList(r,p,m){if(!st.loc)return[];const lim=Date.now()-p*864e5,all=[];
+ [...ev,...mes.d].forEach(e=>{if(e.t>=lim&&e.mag>=m&&dist(e)<=r&&!isDel('b',e)&&!all.some(x=>same(x,e)))all.push(e)});return all.sort((a,b)=>b.t-a.t)}
+function bjSet(k,x){BJ[k]=x;S('sa4bj',BJ);bandeja($('#v'))}
+function bandeja(v){bjLoad();
+ if(!st.loc){v.innerHTML='<div class="card"><h2>Bandeja de sismos</h2><p class="sm">Aquí verás los sismos a menos de 1000 km del lugar que escojas. Primero dinos dónde estás.</p><button class="btn p w" onclick="gps()">Usar mi ubicación</button><a class="btn w" href="#/settings" style="display:block;text-align:center;text-decoration:none">Escribir una ciudad en Ajustes</a></div>';return}
+ const l=bjList(BJ.r,BJ.p,BJ.m);window.hist=l;lastCsv=l.slice(0,150);SEL.list=l.slice(0,150);
+ const chip=(k,val,txt)=>`<button class="chp${BJ[k]==val?' on':''}" aria-pressed="${BJ[k]==val}" onclick="bjSet('${k}',${val})">${txt}</button>`;
+ let dia='',h='';
+ l.slice(0,150).forEach(e=>{const d=new Date(e.t).toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long'}),D2=d.charAt(0).toUpperCase()+d.slice(1);if(D2!=dia){dia=D2;h+=`<h3 class="dh">${esc(D2)}</h3>`}h+=row(e)});
+ v.innerHTML=`<div class="card"><div class="hd"><p class="lbl">Bandeja</p></div><h2 style="margin-top:6px">Sismos cerca de ${esc(st.loc.name)}</h2><p class="sm">Solo los que ocurren dentro del rango que escojas, hasta 1000 km de esta ubicación. Para cambiarla, ve a Ajustes.</p>
+ <p class="sm"><b>Rango</b></p><div class="chips" role="group" aria-label="Rango en kilómetros">${[100,300,500,1000].map(k=>chip('r',k,k+' km')).join('')}</div>
+ <p class="sm"><b>Periodo</b></p><div class="chips">${chip('p',1,'24 horas')}${chip('p',7,'7 días')}${chip('p',30,'30 días')}</div>
+ <p class="sm"><b>Magnitud</b></p><div class="chips">${[['Todos',0],['M4.5+',4.5],['M5+',5],['M6+',6]].map(a=>chip('m',a[1],a[0])).join('')}</div></div>
+ <div class="card"><h2>${l.length} sismo${l.length==1?'':'s'}</h2>${delBtns('b')}<p class="sm">${mesBusy&&!mes.d.length?'Cargando el historial… ':''}A menos de ${BJ.r} km · últimos ${BJ.p==1?'24 horas':BJ.p+' días'}${l.length>150?' · se muestran los 150 más recientes':''}</p>
+ <div class="list">${h||'<p class="sm">No hay sismos en este rango. Prueba con más kilómetros o más días.</p>'}</div>${SEL.on&&SEL.ctx=='b'?selBar():''}<a class="btn w" href="#/historial" style="display:block;text-align:center;text-decoration:none">Ver todo el historial del mundo</a>${BJ.m<4.5?'<p class="sm">El servidor guarda los sismos hasta 90 días.</p>':''}</div>`}
+/* ===== Todo el historial: todos los sismos que el servidor ha detectado (guardados las 24 h) + los de esta app ===== */
+let HX={rows:[],done:false,busy:false,err:false,n:100,q:'',m:0};
+async function hxLoad(){if(HX.busy||HX.done)return;HX.busy=true;HX.err=false;let off=0;const out=[];
+ try{while(off<20000){const r=await fetch(SB.url+'/rest/v1/sismos?select=id,fuente,mag,lugar,t,lat,lon&order=t.desc&limit=1000&offset='+off,{headers:{apikey:SB.key,Authorization:'Bearer '+SB.key}});
+   if(!r.ok)throw 0;const j=await r.json();j.forEach(x=>out.push({id:'sb'+x.id,mag:+x.mag,place:x.lugar||'Sin nombre',t:Date.parse(x.t),lat:x.lat,lon:x.lon,src:x.fuente||'Servidor'}));
+   if(j.length<1000)break;off+=1000;if(location.hash=='#/historial'){HX.rows=out.slice();hxPaint()}}
+  HX.rows=out;HX.done=true}catch(e){HX.err=true;HX.rows=out}
+ HX.busy=false;if(location.hash=='#/historial')hxPaint()}
+function hxAll(){const all=[],seen=new Set();[...ev,...mes.d,...HX.rows].filter(e=>[e.mag,e.lat,e.lon,e.t].every(Number.isFinite)).sort((a,b)=>b.t-a.t).forEach(e=>{
+  if(seen.has(e.id)||isDel('h',e))return;const key=Math.round(e.t/9e4);for(const k of[key-1,key,key+1]){const a=seen['k'+k];if(a&&a.some(x=>km(x.lat,x.lon,e.lat,e.lon)<120&&Math.abs(x.t-e.t)<9e4))return}
+  seen.add(e.id);(seen['k'+key]=seen['k'+key]||[]).push(e);all.push(e)});return all}
+function hxSet(k,x){HX[k]=x;if(k!='n')HX.n=100;hxPaint()}
+function hxMore(){HX.n=1e9;hxPaint(1)}
+function hxPaint(keep){const v=$('#v');if(location.hash!='#/historial'||!v)return;const y=scrollY,t=HX.q.trim().toLowerCase(),all=hxAll(),l=all.filter(e=>e.mag>=HX.m&&(!t||(e.place||'').toLowerCase().includes(t)));lastCsv=l.slice(0,20000);window.hist=l.slice(0,HX.n);SEL.list=l.slice(0,HX.n);
+ let dia='',h='';l.slice(0,HX.n).forEach(e=>{const d=new Date(e.t).toLocaleDateString('es',{weekday:'long',day:'numeric',month:'long',year:'numeric'}),D2=d.charAt(0).toUpperCase()+d.slice(1);if(D2!=dia){dia=D2;h+=`<h3 class="dh">${esc(D2)}</h3>`}h+=row(e)});
+ const old=all.length?new Date(all[all.length-1].t).toLocaleDateString('es',{day:'numeric',month:'long',year:'numeric'}):'';
+ v.innerHTML=`<div class="card"><div class="hd"><p class="lbl">Historial</p><span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="mini" onclick="dlCsv()" aria-label="Descargar el historial de sismos">Descargar historial</button></span></div><h2 style="margin-top:6px">Todos los sismos detectados</h2><p class="sm">${fmtN(all.length)} sismos en total${old?', desde el '+old:''}. ${HX.busy?'Cargando más…':HX.err?'No se pudo leer todo el historial del servidor; se muestran los que ya están en tu teléfono.':''}</p>
+ <input type="text" class="srch" placeholder="Buscar lugar o país" aria-label="Buscar lugar o país" value="${esc(HX.q)}" oninput="HX.q=this.value;HX.n=100;hxPaintKeep()">
+ <div class="chips" role="group" aria-label="Magnitud">${[['Todos',0],['M4.5+',4.5],['M5+',5],['M6+',6],['M7+',7]].map(a=>`<button class="chp${HX.m==a[1]?' on':''}" aria-pressed="${HX.m==a[1]}" onclick="hxSet('m',${a[1]})">${a[0]}</button>`).join('')}</div>
+ <a class="lnk" href="#/inbox">← Volver a la Bandeja</a></div>
+ <div class="card"><h2>${fmtN(l.length)} resultado${l.length==1?'':'s'}</h2>${delBtns('h')}<div class="list">${h||'<p class="sm">No hay sismos con estos filtros.</p>'}</div>${l.length>HX.n?`<button class="btn p w" onclick="hxMore()">Mostrar más · ver los ${fmtN(l.length)} sismos</button>`:''}${SEL.on&&SEL.ctx=='h'?selBar():''}</div>`;
+ if(keep)scrollTo(0,y)}
+function hxPaintKeep(){const i=$('.srch'),p=i?i.selectionStart:0;hxPaint(1);const n=$('.srch');if(n){n.focus();try{n.setSelectionRange(p,p)}catch(e){}}}
+function historial(v){hxLoad();hxPaint()}
+
+function mapv(v){if(typeof L=='undefined'){v.innerHTML='<div class="card"><h2>El mapa necesita internet</h2><p class="sm">No se pudo cargar el mapa. Conéctate a internet y vuelve a intentarlo.</p><button class="btn p w" onclick="location.reload()">Reintentar</button></div>';return}v.innerHTML='<div id="map"></div>';map=L.map('map',{zoomControl:true}).setView(st.loc?[st.loc.lat,st.loc.lon]:[10,-20],st.loc?6:2);
+ baseMap().addTo(map);
+ if(st.loc){L.circle([st.loc.lat,st.loc.lon],{radius:D()*1000,color:'#4F46E5',weight:1,fillOpacity:.06}).addTo(map);L.marker([st.loc.lat,st.loc.lon]).addTo(map).bindPopup('Tú')}
+ const mk={};ev.slice(0,300).forEach(e=>{mk[e.id]=L.circleMarker([e.lat,e.lon],{radius:3+e.mag*1.6,color:e.mag>=6?'#E4472B':e.mag>=4.5?'#E9A23B':'#1E7C8C',fillOpacity:.6,weight:1}).addTo(map).bindPopup(`<b>M${e.mag.toFixed(1)}</b> ${esc(e.place)}<br>${ago(e.t)}${st.loc?' · a '+dist(e)+' km':''} · ${e.src}`)});
+ const f=focus&&ev.find(e=>e.id==focus);focus=null;if(f&&mk[f.id]){map.setView([f.lat,f.lon],6);mk[f.id].openPopup()}}
+function setv(v){v.innerHTML=`
+${st.loc?`<details class="card cl"><summary>Lugar: ${esc(st.loc.name)} · <u>Cambiar</u></summary>${locForm}${favHtml()}</details>`:`<div class="card"><h2>Ubicación</h2><p class="sm">Sin definir</p>${locForm}${favHtml()}</div>`}
+<div class="card"><h2>Cuándo avisar</h2>
+<div class="row"><span>Radio</span><b id="dv">${D()} km</b></div><input type="range" min="50" max="1000" step="50" value="${D()}" aria-label="Radio en km" oninput="st.dist=+this.value;$('#dv').textContent=st.dist+' km';save()" onchange="syncSub();hero()">
+<div class="row"><span>Magnitud mínima</span><b id="mv">M${M().toFixed(1)}</b></div><input type="range" min="3" max="7" step="0.5" value="${M()}" aria-label="Magnitud mínima" oninput="st.min=+this.value;$('#mv').textContent='M'+st.min.toFixed(1);save()" onchange="syncSub()">
+<p class="sm">Los sismos fuertes avisan desde más lejos: M6.5 hasta 400 km, M7 hasta 600, M7.5 hasta 800 y M8 hasta 1000.</p>
+<p class="sm">${st.dist==null&&st.min==null?'Usas los valores del sistema.':'Usas tus propios valores.'}</p><button class="btn w" onclick="st.dist=null;st.min=null;save();syncSub();render()">Usar valores del sistema</button>
+<label class="row"><span>Sirena y vibración</span><input type="checkbox" ${st.siren?'checked':''} onchange="st.siren=this.checked;save()"></label></div>
+<div class="card"><h2>Avisos con la app cerrada</h2><p class="sm">Recibes la alerta en el teléfono aunque no tengas la app abierta.</p>
+<button class="btn ${st.push?'':'p'} w" onclick="${st.push?'pushOff()':'pushOn()'}">${st.push?'Desactivar avisos en segundo plano':'Activar avisos en segundo plano'}</button>
+<div class="row" style="margin-top:8px"><input type="email" id="em" placeholder="Correo para avisos" value="${esc(st.email)}" style="flex:1"><button class="btn" onclick="mail()">${st.email?'Actualizar':'Activar'}</button></div></div>
+<div class="card"><h2>Probar Slack, Gmail y SMS</h2><p class="sm">Manda un mensaje de prueba por cada canal (máximo 3 pruebas por hora).</p>
+<button class="btn p w" id="ckb" style="margin-top:8px" onclick="probarCanales()">Probar los tres canales</button><div id="ckr" class="sm" style="margin-top:8px" role="status"></div></div>
+<div class="card"><h2>Probar alerta</h2><div style="display:flex;gap:8px;flex-wrap:wrap">${[[200,4.5],[100,5],[50,5.5],[400,6.5],[1000,8]].map(a=>`<button class="btn" onclick="testAlert(${a[0]},${a[1]})">${a[0]} km · M${a[1]}</button>`).join('')}</div></div>
+<div class="card"><h2>Fuentes</h2>${SRC.map(s=>`<div class="row"><span><span class="dot ${s.ok?'ok':s.ok===false?'no':''}"></span>${s.id}</span><span class="sm">${s.ok?'Activa':s.ok===false?'Sin respuesta':'Cargando'}</span></div>`).join('')}
+${PENDIENTES.map(p=>`<div class="row"><span style="white-space:nowrap"><span class="dot"></span>${p[0]}</span><span class="sm" style="text-align:right">${p[1]}</span></div>`).join('')}</div>
+${DONATE_BANKS.length?`<div class="card"><h2>Apoyar el proyecto</h2>${DONATE_BANKS.map(b=>`<div class="row"><span>${esc(b.banco)}<br><span class="sm">${esc(b.tipo||'')} · ${esc(b.titular||'')}</span></span><b>${esc(b.numero)}</b></div>`).join('')}</div>`:''}
+${DONATE_URL?`<a class="btn p w" style="display:block;text-align:center;text-decoration:none" href="${esc(DONATE_URL)}" target="_blank" rel="noopener">Apoyar el proyecto</a>`:''}
+<p class="sm" style="margin-top:14px">SismoAlerta informa con datos de redes sísmicas públicas. No sustituye a los sistemas oficiales de protección civil.</p>`}
+/* Dos apps en una: Sismos (#/…) y Clima (#/clima…). Cada una tiene su color, su encabezado y su barra de pestañas. */
+const inClima=()=>(location.hash||'#/').indexOf('#/clima')==0;
+const TI={tray:'<path d="M4 13l2.5-7h11L20 13v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 13h4.5a3.5 3.5 0 0 0 7 0H20"/>',home:'<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>',map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/>',bars:'<path d="M5 20v-9M12 20V5M19 20v-6"/>',set:'<path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>'};
+const TABS={s:[['#/','Inicio','home'],['#/inbox','Bandeja','tray'],['#/map','Mapa','map'],['#/stats','Estadísticas','bars'],['#/settings','Ajustes','set']],c:[['#/clima','Hoy','sun'],['#/clima/map','Mapa','map'],['#/clima/stats','Estadísticas','bars']]};
+
+/* Cada app tiene su propio icono, nombre y color. Al entrar o cambiar de app se muestra su icono un instante. */
+const BR={sismos:{n:'SismoAlerta',s:'Alertas de sismos',i:'icon-192.png',a:'apple-sismos.png',m:'manifest.json',c:'#F8FAFC'},clima:{n:'Clima',s:'Pronóstico, mapa y estadísticas',i:'icon-clima-192.png',a:'apple-clima.png',m:'manifest-clima.json',c:'#2563EB'}};
+let lastApp=null,spT=0;
+function brand(app,splash){const b=BR[app];
+ $('#fav').href=b.i;$('#atp').href=b.a;$('#mf').href=b.m;document.title=b.n;
+ const tc=document.querySelector('meta[name=theme-color]');if(tc)tc.content=b.c;
+ document.querySelectorAll('.mark').forEach(m=>{if(!m.querySelector('img'))m.insertAdjacentHTML('afterbegin','<img alt="" src="'+b.i+'">')});
+ if(splash){const sp=$('#sp');$('#spi').src=b.i;$('#spn').textContent=b.n;$('#sps').textContent=b.s;sp.classList.remove('off');
+  const im=$('#spi');im.style.animation='none';void im.offsetWidth;im.style.animation='';
+  clearTimeout(spT);spT=setTimeout(()=>sp.classList.add('off'),splash)}}
+new MutationObserver(()=>{const a=document.body.dataset.app||'sismos';document.querySelectorAll('.mark').forEach(m=>{if(!m.querySelector('img'))m.insertAdjacentHTML('afterbegin','<img alt="" src="'+BR[a].i+'">')})}).observe($('#hero'),{childList:true});
+function render(){if(SEL.on&&!['#/inbox','#/historial'].includes(location.hash)){SEL.on=false;SEL.ids=new Set()}
+ let h=location.hash||'#/';if(h=='#/weather'){location.replace('#/clima');return}
+ const c=inClima(),v=$('#v'),tabs=TABS[c?'c':'s'];if(map){map.remove();map=null}
+ if(!tabs.some(t=>t[0]==h)&&h!='#/historial')h=tabs[0][0];
+ const app=c?'clima':'sismos';document.body.dataset.app=app;v.dataset.r=h;
+ $('#tabs').innerHTML=tabs.map(t=>`<a href="${t[0]}"${t[0]==h?' class="on" aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${TI[t[2]]}</svg><span>${t[1]}</span></a>`).join('');
+ if(c){wxHero();h=='#/clima/map'?wmapv(v):h=='#/clima/stats'?wstatv(v):wxv(v);if(h!='#/clima'&&st.loc&&!wxFresh())wxLoad().then(()=>{if(inClima())wxHero()}).catch(()=>{})}
+ else{hero();h=='#/map'?mapv(v):h=='#/inbox'?bandeja(v):h=='#/historial'?historial(v):h=='#/settings'?setv(v):h=='#/stats'?statv(v):home(v)}
+ brand(app,lastApp===app?0:lastApp===null?1300:900);lastApp=app}
+/* Cada minuto llegan sismos nuevos: se actualiza solo lo que corresponde, sin borrar lo que la persona está escribiendo ni mover el mapa. Las alertas siguen funcionando aunque estés en Clima. */
+function refresh(){if(inClima())return;const h=location.hash||'#/',a=document.activeElement,typing=a&&['INPUT','SELECT'].includes(a.tagName);hero();if(h=='#/'){if(!typing)home($('#v'))}else if(h=='#/settings'&&!typing)setv($('#v'))}
+
+$('#v').addEventListener('click',e=>{const b=e.target.closest('.ev[data-id]');if(b){if(SEL.on)selToggle(b.dataset.id);else openSh(b.dataset.id)}});
+addEventListener('hashchange',()=>{render();scrollTo(0,0)});
+if('serviceWorker'in navigator&&location.protocol.indexOf('http')==0)navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();load();setInterval(load,6e4);
+</script></body></html>
